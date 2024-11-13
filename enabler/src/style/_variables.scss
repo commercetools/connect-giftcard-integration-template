@@ -1,0 +1,28 @@
+/**
+* From https://www.figma.com/file/B3AuN5HVBARkLRXuYUWVY0/CA_UI-library?node-id=10-17139&t=HIYfSjMPWF7Q8zEX-0
+*/
+
+@use 'colors';
+
+// TEXT
+$color-text-helper: colors.$color-style-text-helper;
+$color-text-white: colors.$color-style-white;
+
+// BORDER
+$color-border-default: colors.$color-style-other-border-default;
+$color-border-focus: colors.$color-style-other-border-dark;
+
+// error
+$color-status-error: colors.$color-style-error-main;
+
+// FONTS
+$font-family: var(--ctc-font-family);
+$font-weight-light: 300;
+$font-weight-regular: 400;
+$font-weight-medium: 500;
+
+// Radiuses
+$border-radius: 0.25rem;
+
+// Z-Index
+$z-index-1: 1;
