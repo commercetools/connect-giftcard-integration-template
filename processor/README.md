@@ -10,7 +10,7 @@ The module also provides template scripts for post-deployment and pre-undeployme
 These instructions will get you up and running on your local machine for development and testing purposes.
 Please run following npm commands under `processor` folder.
 
-#### Install PSP SDK
+#### Install giftcard SDK
 In case SDK is provided by giftcard service provider for communication purpose, you can import the SDK by following commands
 ```
 $ npm install <giftcard-sdk>
