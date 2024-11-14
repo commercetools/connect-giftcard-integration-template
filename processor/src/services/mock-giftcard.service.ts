@@ -57,8 +57,9 @@ export class MockGiftCardService extends AbstractGiftCardService {
         }),
         async () => {
           try {
+            // TODO: Make request to healthcheck API of external giftcard service provider
             return {
-              name: 'Voucherify Status check',
+              name: 'mock giftcard API call',
               status: 'UP',
               details: {
                 // TODO : Implement result
@@ -66,9 +67,9 @@ export class MockGiftCardService extends AbstractGiftCardService {
             };
           } catch (e) {
             return {
-              name: 'Voucherify Status check',
+              name: 'mock giftcard API call',
               status: 'DOWN',
-              message: `Not able to talk to the Voucherify API`,
+              message: `Not able to communicate with giftcard service provider API`,
               details: {
                 error: e,
               },
