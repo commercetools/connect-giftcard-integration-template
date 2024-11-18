@@ -11,7 +11,7 @@
     "build": "rm -rf /dist && tsc",
     "dev": "ts-node src/main.ts",
     "watch": "nodemon --watch \"src/**\" --ext \"ts,json,html\" --ignore \"src/**/*.spec.ts\" --exec \"ts-node src/main.ts\"",
-    "test": "jest --detectOpenHandles --silent=false",
+    "test": "jest --detectOpenHandles",
     "test:watch": "jest --watch --detectOpenHandles",
     "test:coverage": "jest --detectOpenHandles --coverage",
     "connector:post-deploy": "node src/connectors/post-deploy.ts",
