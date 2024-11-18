@@ -31,7 +31,7 @@ export const AuthErrorResponse = Type.Composite([
   }),
 ]);
 
-export const VoucherifyCustomErrorResponse = Type.Object({
+export const MockCustomErrorResponse = Type.Object({
   status: Type.Object({
     state: Type.String(),
     errors: Type.Optional(Type.Array(ErrorObject)),
@@ -47,4 +47,4 @@ export const VoucherifyCustomErrorResponse = Type.Object({
 export type TErrorObject = Static<typeof ErrorObject>;
 export type TErrorResponse = Static<typeof ErrorResponse>;
 export type TAuthErrorResponse = Static<typeof AuthErrorResponse>;
-export type TVoucherifyCustomErrorResponse = Static<typeof VoucherifyCustomErrorResponse>;
+export type TMockCustomErrorResponse = Static<typeof MockCustomErrorResponse>;

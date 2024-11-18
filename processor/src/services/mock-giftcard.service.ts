@@ -96,7 +96,7 @@ export class MockGiftCardService extends AbstractGiftCardService {
     });
     const amountPlanned = await this.ctCartService.getPaymentAmount({ cart: ctCart });
     const cartCurrencyCode = amountPlanned.currencyCode;
-    const mockGiftCardClient = MockGiftCardClient.init(cartCurrencyCode);
+    const mockGiftCardClient = new MockGiftCardClient(cartCurrencyCode);
     const getBalanceResult: MockGiftCardClientResult = mockGiftCardClient.balance(code);
 
     return BalanceConverter.convert(getBalanceResult, cartCurrencyCode);

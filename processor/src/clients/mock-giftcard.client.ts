@@ -1,16 +1,8 @@
 import { MockGiftCardClientResult, GiftCardCodeType } from './types/mock-giftcard.client.type';
 export class GiftCardClient {
-  private static client: GiftCardClient;
   private currencyCode: string;
-  private constructor(currencyCode: string) {
+  public constructor(currencyCode: string) {
     this.currencyCode = currencyCode;
-  }
-
-  static init(currencyCode: string): GiftCardClient {
-    if (this.client === undefined) {
-      this.client = new GiftCardClient(currencyCode);
-    }
-    return this.client;
   }
 
   public balance(giftCardCode: string): MockGiftCardClientResult {
