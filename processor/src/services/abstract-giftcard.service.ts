@@ -15,7 +15,7 @@ import {
 } from './types/operation.type';
 import { AmountSchemaDTO, PaymentModificationStatus } from '../dtos/operations/payment-intents.dto';
 import { log } from '../libs/logger';
-import { RedeemRequestDTO } from '../dtos/mock-giftcards.dto';
+import { BalanceResponseSchemaDTO, RedeemRequestDTO } from '../dtos/mock-giftcards.dto';
 
 export abstract class AbstractGiftCardService {
   protected ctCartService: CommercetoolsCartService;
@@ -42,7 +42,7 @@ export abstract class AbstractGiftCardService {
    * Validate Code and return balance
    * @returns
    */
-  abstract balance(code: string): Promise<void>;
+  abstract balance(code: string): Promise<BalanceResponseSchemaDTO>;
 
   /**
    * Redeem Code

@@ -15,7 +15,11 @@ import {
 import { getConfig } from '../config/config';
 import { appLogger, paymentSDK } from '../payment-sdk';
 import { AbstractGiftCardService } from './abstract-giftcard.service';
-
+import { GiftCardClient as MockGiftCardClient } from '../clients/mock-giftcard.client';
+import { MockGiftCardClientResult } from '../clients/types/mock-giftcard.client.type';
+import { getCartIdFromContext } from '../libs/fastify/context/context';
+import { BalanceResponseSchemaDTO } from '../dtos/mock-giftcards.dto';
+import { BalanceConverter } from './converters/balance-converter';
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const packageJSON = require('../../package.json');
 
@@ -86,8 +90,16 @@ export class MockGiftCardService extends AbstractGiftCardService {
     return handler.body;
   }
 
-  async balance(): Promise<void> {
-    // TODO : implement balance logic with mock client
+  async balance(code: string): Promise<BalanceResponseSchemaDTO> {
+    const ctCart = await this.ctCartService.getCart({
+      id: getCartIdFromContext(),
+    });
+    const amountPlanned = await this.ctCartService.getPaymentAmount({ cart: ctCart });
+    const cartCurrencyCode = amountPlanned.currencyCode;
+    const mockGiftCardClient = MockGiftCardClient.init(cartCurrencyCode);
+    const getBalanceResult: MockGiftCardClientResult = mockGiftCardClient.balance(code);
+
+    return BalanceConverter.convert(getBalanceResult, cartCurrencyCode);
   }
 
   async redeem(): Promise<void> {
