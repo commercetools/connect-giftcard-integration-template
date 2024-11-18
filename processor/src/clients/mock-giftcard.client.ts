@@ -7,7 +7,7 @@ export class GiftCardClient {
   }
 
   static init(currencyCode: string): GiftCardClient {
-    if (this.client === null) {
+    if (this.client === undefined) {
       this.client = new GiftCardClient(currencyCode);
     }
     return this.client;
@@ -25,7 +25,7 @@ export class GiftCardClient {
       case GiftCardCodeType.GENERIC_ERROR:
         return {
           message: 'Generic error occurs.',
-          code: GiftCardCodeType.EXPIRED,
+          code: GiftCardCodeType.GENERIC_ERROR,
         };
       case GiftCardCodeType.VALID: {
         if (giftCardCodeBreakdown.length != 3) break;
@@ -40,7 +40,7 @@ export class GiftCardClient {
           };
         } else {
           return {
-            message: 'The giftcard is valid',
+            message: 'The giftcard is valid.',
             code: GiftCardCodeType.VALID,
             amount: {
               centAmount: Number(giftCardCentAmount),
@@ -54,7 +54,7 @@ export class GiftCardClient {
     }
 
     return {
-      message: 'The giftcard is not found',
+      message: 'The giftcard is not found.',
       code: GiftCardCodeType.NOT_FOUND,
     };
   }

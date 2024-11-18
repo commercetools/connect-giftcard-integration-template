@@ -1,7 +1,7 @@
 {
-  "name": "giftcard-integration-voucherify",
+  "name": "giftcard-integration-template",
   "version": "0.0.1",
-  "description": "Gift card integration with Voucherify",
+  "description": "Gift card integration template",
   "main": "dist/server.js",
   "scripts": {
     "start": "node dist/main.js",
@@ -11,7 +11,7 @@
     "build": "rm -rf /dist && tsc",
     "dev": "ts-node src/main.ts",
     "watch": "nodemon --watch \"src/**\" --ext \"ts,json,html\" --ignore \"src/**/*.spec.ts\" --exec \"ts-node src/main.ts\"",
-    "test": "jest --detectOpenHandles",
+    "test": "jest --detectOpenHandles --silent=false",
     "test:watch": "jest --watch --detectOpenHandles",
     "test:coverage": "jest --detectOpenHandles --coverage",
     "connector:post-deploy": "node src/connectors/post-deploy.ts",

@@ -23,14 +23,14 @@ import { BalanceConverter } from './converters/balance-converter';
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const packageJSON = require('../../package.json');
 
-export type VoucherifyGiftCardServiceOptions = {
+export type MockGiftCardServiceOptions = {
   ctCartService: CommercetoolsCartService;
   ctPaymentService: CommercetoolsPaymentService;
   ctOrderService: CommercetoolsOrderService;
 };
 
 export class MockGiftCardService extends AbstractGiftCardService {
-  constructor(opts: VoucherifyGiftCardServiceOptions) {
+  constructor(opts: MockGiftCardServiceOptions) {
     super(opts.ctCartService, opts.ctPaymentService, opts.ctOrderService);
   }
 
