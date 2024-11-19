@@ -24,7 +24,6 @@ export const errorHandler = (error: Error, req: FastifyRequest, reply: FastifyRe
   } else if (error instanceof ErrorAuthErrorResponse) {
     return handleAuthError(error, reply);
   } else if (error instanceof MockCustomError || error instanceof MockApiError) {
-    console.log('=== === === handleMockCustomError === === ===');
     return handleMockCustomError(error, reply);
   } else if (error instanceof Errorx) {
     return handleErrors([error], reply);
