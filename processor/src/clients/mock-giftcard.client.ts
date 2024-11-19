@@ -8,7 +8,7 @@ export class GiftCardClient {
   public balance(giftCardCode: string): MockGiftCardClientResult {
     /** In mock example, we categorize different use cases based on the input giftcard code
      *
-     * "Valid-<amount>-<currency>" - It represents a valid giftcad with specified balance and currency.
+     * "Valid-<amount>-<currency>" - It represents a valid giftcard with specified balance and currency.
      * "Expired" - The giftcard code represents an expired giftcard.
      * "GenericError" - It represents a giftcard code which leads to generic error from giftcard service provider.
      * "NotFound" - It represents a non-existing giftcard code.
