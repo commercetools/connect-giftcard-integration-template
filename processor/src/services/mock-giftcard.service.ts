@@ -20,8 +20,7 @@ import { MockGiftCardClientResult } from '../clients/types/mock-giftcard.client.
 import { getCartIdFromContext } from '../libs/fastify/context/context';
 import { BalanceResponseSchemaDTO } from '../dtos/mock-giftcards.dto';
 import { BalanceConverter } from './converters/balance-converter';
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-const packageJSON = require('../../package.json');
+import packageJSON from '../../package.json';
 
 export type MockGiftCardServiceOptions = {
   ctCartService: CommercetoolsCartService;
