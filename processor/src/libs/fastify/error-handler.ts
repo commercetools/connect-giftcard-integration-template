@@ -11,7 +11,7 @@ import {
   Errorx,
   MultiErrorx,
 } from '@commercetools/connect-payments-sdk';
-import { TAuthErrorResponse, TErrorObject, TErrorResponse, TVoucherifyCustomErrorResponse } from './dtos/error.dto';
+import { TAuthErrorResponse, TErrorObject, TErrorResponse, TMockCustomErrorResponse } from './dtos/error.dto';
 import { MockApiError, MockCustomError } from '../../errors/mock-api.error';
 
 function isFastifyValidationError(error: Error): error is FastifyError {
@@ -24,7 +24,7 @@ export const errorHandler = (error: Error, req: FastifyRequest, reply: FastifyRe
   } else if (error instanceof ErrorAuthErrorResponse) {
     return handleAuthError(error, reply);
   } else if (error instanceof MockCustomError || error instanceof MockApiError) {
-    return handleVoucherifyError(error, reply);
+    return handleMockCustomError(error, reply);
   } else if (error instanceof Errorx) {
     return handleErrors([error], reply);
   } else if (error instanceof MultiErrorx) {
@@ -42,10 +42,10 @@ export const errorHandler = (error: Error, req: FastifyRequest, reply: FastifyRe
   );
 };
 
-const handleVoucherifyError = (error: MockCustomError, reply: FastifyReply) => {
+const handleMockCustomError = (error: MockCustomError, reply: FastifyReply) => {
   const transformedErrors: TErrorObject[] = transformErrorxToHTTPModel([error]);
 
-  const response: TVoucherifyCustomErrorResponse = {
+  const response: TMockCustomErrorResponse = {
     status: {
       state: error.code,
       errors: transformedErrors,

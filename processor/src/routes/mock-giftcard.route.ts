@@ -44,7 +44,8 @@ export const mockGiftCardServiceRoutes = async (
       },
     },
     async (request, reply) => {
-      const res = await opts.giftCardService.balance();
+      const { code } = request.params;
+      const res = await opts.giftCardService.balance(code);
       return reply.status(200).send(res);
     },
   );

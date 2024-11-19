@@ -1,7 +1,7 @@
 {
-  "name": "giftcard-integration-voucherify",
+  "name": "giftcard-integration-template",
   "version": "0.0.1",
-  "description": "Gift card integration with Voucherify",
+  "description": "Gift card integration template",
   "main": "dist/server.js",
   "scripts": {
     "start": "node dist/main.js",
