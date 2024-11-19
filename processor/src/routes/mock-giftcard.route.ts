@@ -2,7 +2,7 @@ import {
   SessionHeaderAuthenticationHook,
   SessionQueryParamAuthenticationHook,
 } from '@commercetools/connect-payments-sdk';
-import { FastifyRequest, FastifyReply, FastifyInstance, FastifyPluginOptions } from 'fastify';
+import { FastifyInstance, FastifyPluginOptions } from 'fastify';
 import { MockGiftCardService } from '../services/mock-giftcard.service';
 import {
   BalanceResponseSchema,
@@ -12,17 +12,12 @@ import {
 } from '../dtos/mock-giftcards.dto';
 import { Type } from '@sinclair/typebox';
 import { AmountSchema } from '../dtos/operations/payment-intents.dto';
-import { RouteGenericInterface } from 'fastify/types/route';
 
 type RoutesOptions = {
   giftCardService: MockGiftCardService;
   sessionHeaderAuthHook: SessionHeaderAuthenticationHook;
   sessionQueryParamAuthHook: SessionQueryParamAuthenticationHook;
 };
-
-interface IBalanceRequestParam extends RouteGenericInterface {
-  Params: { code: string };
-}
 
 export const mockGiftCardServiceRoutes = async (
   fastify: FastifyInstance,
@@ -48,7 +43,7 @@ export const mockGiftCardServiceRoutes = async (
         },
       },
     },
-    async (request: FastifyRequest<IBalanceRequestParam>, reply: FastifyReply) => {
+    async (request, reply) => {
       const { code } = request.params;
       const res = await opts.giftCardService.balance(code);
       return reply.status(200).send(res);
