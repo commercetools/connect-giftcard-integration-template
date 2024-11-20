@@ -9,6 +9,7 @@ export const config = {
   apiUrl: process.env.CTP_API_URL || 'https://api.europe-west1.gcp.commercetools.com',
   sessionUrl: process.env.CTP_SESSION_URL || 'https://session.europe-west1.gcp.commercetools.com/',
   healthCheckTimeout: parseInt(process.env.HEALTH_CHECK_TIMEOUT || '5000'),
+  giftCardCurrency: process.env.GIFTCARD_CURRENCY || '',
 
   // Required by logger
   loggerLevel: process.env.LOGGER_LEVEL || 'info',

@@ -1,11 +1,16 @@
-import { MockGiftCardClientResult, GiftCardCodeType } from './types/mock-giftcard.client.type';
+import {
+  MockClientBalanceResponse,
+  MockClientRedeemRequest,
+  MockClientRedeemResponse,
+  GiftCardCodeType,
+} from './types/mock-giftcard.client.type';
 export class GiftCardClient {
   private currencyCode: string;
   public constructor(currencyCode: string) {
     this.currencyCode = currencyCode;
   }
 
-  public balance(giftCardCode: string): MockGiftCardClientResult {
+  public async balance(giftCardCode: string): Promise<MockClientBalanceResponse> {
     /** In mock example, we categorize different use cases based on the input giftcard code
      *
      * "Valid-<amount>-<currency>" - It represents a valid giftcard with specified balance and currency.
@@ -55,6 +60,22 @@ export class GiftCardClient {
     return {
       message: 'The giftcard is not found.',
       code: GiftCardCodeType.NOT_FOUND,
+    };
+  }
+  public async redeem(request: MockClientRedeemRequest): Promise<MockClientRedeemResponse> {
+    const giftCardCode = request.code;
+    if (giftCardCode.split('-').length === 3 && giftCardCode.split('-')[0] === GiftCardCodeType.VALID)
+      return {
+        resultCode: 'SUCCESS',
+        redemptionReference: 'mock-redemption-ref',
+        code: request.code,
+        amount: request.amount,
+      };
+    return {
+      resultCode: 'FAILURE',
+      redemptionReference: 'mock-redemption-ref',
+      code: request.code,
+      amount: request.amount,
     };
   }
 }

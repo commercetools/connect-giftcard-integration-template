@@ -15,7 +15,7 @@ import {
 } from './types/operation.type';
 import { AmountSchemaDTO, PaymentModificationStatus } from '../dtos/operations/payment-intents.dto';
 import { log } from '../libs/logger';
-import { BalanceResponseSchemaDTO, RedeemRequestDTO } from '../dtos/mock-giftcards.dto';
+import { BalanceResponseSchemaDTO, RedeemRequestDTO, RedeemResponseDTO } from '../dtos/mock-giftcards.dto';
 
 export abstract class AbstractGiftCardService {
   protected ctCartService: CommercetoolsCartService;
@@ -48,7 +48,7 @@ export abstract class AbstractGiftCardService {
    * Redeem Code
    * @returns
    */
-  abstract redeem(opt: { data: RedeemRequestDTO }): Promise<void>;
+  abstract redeem(opt: { data: RedeemRequestDTO }): Promise<RedeemResponseDTO>;
 
   /**
    * Capture payment
