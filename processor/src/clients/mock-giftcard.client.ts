@@ -4,6 +4,9 @@ import {
   MockClientRedeemResponse,
   GiftCardCodeType,
 } from './types/mock-giftcard.client.type';
+
+import { randomUUID } from 'node:crypto';
+
 export class GiftCardClient {
   private currencyCode: string;
   public constructor(currencyCode: string) {
@@ -64,16 +67,20 @@ export class GiftCardClient {
   }
   public async redeem(request: MockClientRedeemRequest): Promise<MockClientRedeemResponse> {
     const giftCardCode = request.code;
-    if (giftCardCode.split('-').length === 3 && giftCardCode.split('-')[0] === GiftCardCodeType.VALID)
+    const giftCardCodeBreakdown = giftCardCode.split('-');
+    if (
+      giftCardCodeBreakdown.length === 3 &&
+      giftCardCodeBreakdown[0] === GiftCardCodeType.VALID &&
+      giftCardCodeBreakdown[1] !== '0'
+    )
       return {
         resultCode: 'SUCCESS',
-        redemptionReference: 'mock-redemption-ref',
+        redemptionReference: randomUUID(),
         code: request.code,
         amount: request.amount,
       };
     return {
       resultCode: 'FAILURE',
-      redemptionReference: 'mock-redemption-ref',
       code: request.code,
       amount: request.amount,
     };

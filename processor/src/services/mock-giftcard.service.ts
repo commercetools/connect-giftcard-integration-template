@@ -124,7 +124,7 @@ export class MockGiftCardService extends AbstractGiftCardService {
      *  It is supposed that a valid giftcard should be with a giftcard code format as "Valid-<amount>-<currency>"
      */
     const giftCardCurrencyCode =
-      redeemCode.startsWith('Valid', 5) && redeemCode.split('-').length > 3 ? redeemCode.split('-')[2] : '';
+      redeemCode.startsWith('Valid', 0) && redeemCode.split('-').length === 3 ? redeemCode.split('-')[2] : '';
 
     if (giftCardCurrencyCode !== cartCurrencyCode) {
       throw new MockCustomError({
@@ -151,6 +151,7 @@ export class MockGiftCardService extends AbstractGiftCardService {
           anonymousId: ctCart.anonymousId,
         }),
     });
+
     await this.ctCartService.addPayment({
       resource: {
         id: ctCart.id,
@@ -177,7 +178,6 @@ export class MockGiftCardService extends AbstractGiftCardService {
         state: RedemptionConverter.convertMockClientResultCode(response.resultCode),
       },
     });
-
     return RedemptionConverter.convert({ redemptionResult: response, paymentResult: updatedPayment });
   }
 

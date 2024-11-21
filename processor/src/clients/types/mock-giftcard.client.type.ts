@@ -17,7 +17,7 @@ export type MockClientRedeemRequest = {
 
 export type MockClientRedeemResponse = {
   resultCode: string;
-  redemptionReference: string;
+  redemptionReference?: string;
   code: string;
   amount: {
     centAmount: number;
