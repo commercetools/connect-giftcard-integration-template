@@ -1,7 +1,25 @@
-export type MockGiftCardClientResult = {
+export type MockClientBalanceResponse = {
   message: string;
   code: string;
   amount?: {
+    centAmount: number;
+    currencyCode: string;
+  };
+};
+
+export type MockClientRedeemRequest = {
+  code: string;
+  amount: {
+    centAmount: number;
+    currencyCode: string;
+  };
+};
+
+export type MockClientRedeemResponse = {
+  resultCode: string;
+  redemptionReference?: string;
+  code: string;
+  amount: {
     centAmount: number;
     currencyCode: string;
   };

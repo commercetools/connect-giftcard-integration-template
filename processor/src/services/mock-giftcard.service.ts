@@ -12,14 +12,23 @@ import {
   PaymentProviderModificationResponse,
   StatusResponse,
 } from './types/operation.type';
+import { RedeemRequestDTO } from '../dtos/mock-giftcards.dto';
 import { getConfig } from '../config/config';
 import { appLogger, paymentSDK } from '../payment-sdk';
 import { AbstractGiftCardService } from './abstract-giftcard.service';
 import { GiftCardClient as MockGiftCardClient } from '../clients/mock-giftcard.client';
-import { MockGiftCardClientResult } from '../clients/types/mock-giftcard.client.type';
-import { getCartIdFromContext } from '../libs/fastify/context/context';
-import { BalanceResponseSchemaDTO } from '../dtos/mock-giftcards.dto';
+import {
+  MockClientBalanceResponse,
+  MockClientRedeemRequest,
+  MockClientRedeemResponse,
+  GiftCardCodeType,
+} from '../clients/types/mock-giftcard.client.type';
+import { getCartIdFromContext, getPaymentInterfaceFromContext } from '../libs/fastify/context/context';
+import { BalanceResponseSchemaDTO, RedeemResponseDTO } from '../dtos/mock-giftcards.dto';
+import { MockCustomError } from '../errors/mock-api.error';
 import { BalanceConverter } from './converters/balance-converter';
+import { RedemptionConverter } from './converters/redemption-converter';
+
 import packageJSON from '../../package.json';
 
 export type MockGiftCardServiceOptions = {
@@ -96,13 +105,80 @@ export class MockGiftCardService extends AbstractGiftCardService {
     const amountPlanned = await this.ctCartService.getPaymentAmount({ cart: ctCart });
     const cartCurrencyCode = amountPlanned.currencyCode;
     const mockGiftCardClient = new MockGiftCardClient(cartCurrencyCode);
-    const getBalanceResult: MockGiftCardClientResult = mockGiftCardClient.balance(code);
+    const getBalanceResult: MockClientBalanceResponse = await mockGiftCardClient.balance(code);
 
     return BalanceConverter.convert(getBalanceResult, cartCurrencyCode);
   }
 
-  async redeem(): Promise<void> {
-    // TODO : implement redeem logic with mock client
+  async redeem(opts: { data: RedeemRequestDTO }): Promise<RedeemResponseDTO> {
+    const ctCart = await this.ctCartService.getCart({
+      id: getCartIdFromContext(),
+    });
+
+    const amountPlanned = await this.ctCartService.getPaymentAmount({ cart: ctCart });
+    const cartCurrencyCode = amountPlanned.currencyCode;
+    const redeemAmount = opts.data.redeemAmount;
+    const redeemCode = opts.data.code;
+
+    /* Mock mechanism to obtain the currency covered by the given giftcard.
+     *  It is supposed that a valid giftcard should be with a giftcard code format as "Valid-<amount>-<currency>"
+     */
+    const giftCardCurrencyCode =
+      redeemCode.startsWith('Valid', 0) && redeemCode.split('-').length === 3 ? redeemCode.split('-')[2] : '';
+
+    if (giftCardCurrencyCode !== cartCurrencyCode) {
+      throw new MockCustomError({
+        message: 'cart and gift card currency do not match',
+        code: 400,
+        key: GiftCardCodeType.CURRENCY_NOT_MATCH,
+      });
+    }
+
+    const ctPayment = await this.ctPaymentService.createPayment({
+      amountPlanned: redeemAmount,
+      paymentMethodInfo: {
+        paymentInterface: getPaymentInterfaceFromContext() || 'mock-giftcard-provider',
+        method: 'giftcard',
+      },
+      ...(ctCart.customerId && {
+        customer: {
+          typeId: 'customer',
+          id: ctCart.customerId,
+        },
+      }),
+      ...(!ctCart.customerId &&
+        ctCart.anonymousId && {
+          anonymousId: ctCart.anonymousId,
+        }),
+    });
+
+    await this.ctCartService.addPayment({
+      resource: {
+        id: ctCart.id,
+        version: ctCart.version,
+      },
+      paymentId: ctPayment.id,
+    });
+
+    const mockGiftCardClient = new MockGiftCardClient(cartCurrencyCode);
+    const request: MockClientRedeemRequest = {
+      code: redeemCode,
+      amount: redeemAmount,
+    };
+
+    const response: MockClientRedeemResponse = await mockGiftCardClient.redeem(request);
+
+    const updatedPayment = await this.ctPaymentService.updatePayment({
+      id: ctPayment.id,
+      pspReference: response.redemptionReference,
+      transaction: {
+        type: 'Charge',
+        amount: ctPayment.amountPlanned,
+        interactionId: response.redemptionReference,
+        state: RedemptionConverter.convertMockClientResultCode(response.resultCode),
+      },
+    });
+    return RedemptionConverter.convert({ redemptionResult: response, paymentResult: updatedPayment });
   }
 
   /**

@@ -51,7 +51,7 @@ export const mockGiftCardServiceRoutes = async (
   );
 
   fastify.post<{ Body: RedeemRequestDTO; Reply: void }>(
-    '/redemption',
+    '/redeem',
     {
       preHandler: [opts.sessionHeaderAuthHook.authenticate()],
       schema: {
@@ -69,9 +69,11 @@ export const mockGiftCardServiceRoutes = async (
       },
     },
     async (request, reply) => {
-      await opts.giftCardService.redeem();
+      const res = await opts.giftCardService.redeem({
+        data: request.body,
+      });
 
-      return reply.status(200).send('done');
+      return reply.status(200).send(res);
     },
   );
 };
