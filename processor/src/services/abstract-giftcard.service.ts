@@ -81,16 +81,16 @@ export abstract class AbstractGiftCardService {
       id: opts.paymentId,
     });
 
-    const modifyPaymentAction = opts.data.actions[0];
+    const request = opts.data.actions[0];
 
     let requestAmount!: AmountSchemaDTO;
-    if (modifyPaymentAction.action != 'cancelPayment') {
-      requestAmount = modifyPaymentAction.amount;
+    if (request.action != 'cancelPayment') {
+      requestAmount = request.amount;
     } else {
       requestAmount = ctPayment.amountPlanned;
     }
 
-    const transactionType = this.getPaymentTransactionType(modifyPaymentAction.action);
+    const transactionType = this.getPaymentTransactionType(request.action);
 
     let updatedPayment = await this.ctPaymentService.updatePayment({
       id: ctPayment.id,
@@ -99,6 +99,11 @@ export abstract class AbstractGiftCardService {
         amount: requestAmount,
         state: 'Initial',
       },
+    });
+
+    log.info(`Processing payment modification.`, {
+      paymentId: updatedPayment.id,
+      action: request.action,
     });
 
     const res = await this.processPaymentModification(updatedPayment, transactionType, requestAmount);
@@ -111,6 +116,12 @@ export abstract class AbstractGiftCardService {
         interactionId: res.pspReference,
         state: this.convertPaymentModificationOutcomeToState(res.outcome),
       },
+    });
+
+    log.info(`Payment modification completed.`, {
+      paymentId: updatedPayment.id,
+      action: request.action,
+      result: res.outcome,
     });
 
     return {
