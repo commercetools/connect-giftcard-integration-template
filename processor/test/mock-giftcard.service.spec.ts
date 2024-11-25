@@ -4,10 +4,14 @@ import { MockGiftCardService, MockGiftCardServiceOptions } from '../src/services
 import { DefaultCartService } from '@commercetools/connect-payments-sdk/dist/commercetools/services/ct-cart.service';
 import { DefaultPaymentService } from '@commercetools/connect-payments-sdk/dist/commercetools/services/ct-payment.service';
 import { mockGetCartResult, mockGetPaymentAmount } from './utils/mock-cart-data';
-import { mockUpdatePaymentResult, mockCreatePaymentResult } from './utils/mock-payment-data';
+import { mockUpdatePaymentResult, mockCreatePaymentResult, mockGetPaymentResultForRollbackRedemption, mockUpdatePaymentResultForRollbackRedemption } from './utils/mock-payment-data';
 import { GiftCardCodeType } from '../src/clients/types/mock-giftcard.client.type';
 import { RedeemRequestDTO } from '../src/dtos/mock-giftcards.dto';
 import { MockCustomError } from '../src/errors/mock-api.error';
+import {
+  ModifyPayment,
+} from '../src/services/types/operation.type';
+
 import crypto from 'crypto';
 describe('mock-giftcard.service', () => {
   // Please customize test cases below
@@ -26,7 +30,7 @@ describe('mock-giftcard.service', () => {
     jest.restoreAllMocks();
   });
 
-  test('input valid giftcard', async () => {
+  test('When checking balance by inputting valid giftcard, it should return status as Valid', async () => {
     jest.spyOn(DefaultCartService.prototype, 'getCart').mockReturnValue(Promise.resolve(mockGetCartResult()));
     jest.spyOn(DefaultCartService.prototype, 'getPaymentAmount').mockReturnValue(Promise.resolve(mockGetPaymentAmount));
 
@@ -38,7 +42,7 @@ describe('mock-giftcard.service', () => {
     expect(result.amount.currencyCode).toStrictEqual('USD');
   });
 
-  test('input giftcard with wrong currency code', async () => {
+  test('When checking balance by inputting giftcard with wrong currency code', async () => {
     jest.spyOn(DefaultCartService.prototype, 'getCart').mockReturnValue(Promise.resolve(mockGetCartResult()));
     jest.spyOn(DefaultCartService.prototype, 'getPaymentAmount').mockReturnValue(Promise.resolve(mockGetPaymentAmount));
     try {
@@ -52,7 +56,7 @@ describe('mock-giftcard.service', () => {
       expect((error as MockCustomError).message).toStrictEqual('Currency does not match.');
     }
   });
-  test('input expired giftcard', async () => {
+  test('When checking balance by inputting an expired giftcard, it should throw error with Expired code', async () => {
     jest.spyOn(DefaultCartService.prototype, 'getCart').mockReturnValue(Promise.resolve(mockGetCartResult()));
     jest.spyOn(DefaultCartService.prototype, 'getPaymentAmount').mockReturnValue(Promise.resolve(mockGetPaymentAmount));
     try {
@@ -66,7 +70,7 @@ describe('mock-giftcard.service', () => {
       expect((error as MockCustomError).message).toStrictEqual('The giftcard is expired.');
     }
   });
-  test('input expired giftcard', async () => {
+  test('When checking balance by inputting an errorneous giftcard, it should throw error with GenericError code', async () => {
     jest.spyOn(DefaultCartService.prototype, 'getCart').mockReturnValue(Promise.resolve(mockGetCartResult()));
     jest.spyOn(DefaultCartService.prototype, 'getPaymentAmount').mockReturnValue(Promise.resolve(mockGetPaymentAmount));
     try {
@@ -80,7 +84,7 @@ describe('mock-giftcard.service', () => {
       expect((error as MockCustomError).message).toStrictEqual('Generic error occurs.');
     }
   });
-  test('input non-existing giftcard', async () => {
+  test('When checking balance by inputting a non-existing giftcard, it should throw error with NotFound code', async () => {
     jest.spyOn(DefaultCartService.prototype, 'getCart').mockReturnValue(Promise.resolve(mockGetCartResult()));
     jest.spyOn(DefaultCartService.prototype, 'getPaymentAmount').mockReturnValue(Promise.resolve(mockGetPaymentAmount));
     try {
@@ -94,7 +98,7 @@ describe('mock-giftcard.service', () => {
       expect((error as MockCustomError).message).toStrictEqual('The giftcard is not found.');
     }
   });
-  test('redeem valid giftcard', async () => {
+  test('When redeeming a valid giftcard, it should return Success as result', async () => {
     const dummyUUID = 'It-is-a-dummy-uuid';
     jest.spyOn(DefaultCartService.prototype, 'getCart').mockReturnValue(Promise.resolve(mockGetCartResult()));
     jest.spyOn(DefaultCartService.prototype, 'getPaymentAmount').mockReturnValue(Promise.resolve(mockGetPaymentAmount));
@@ -123,7 +127,7 @@ describe('mock-giftcard.service', () => {
     expect(result.paymentId).toStrictEqual('123456');
     expect(result.redemptionId).toStrictEqual(dummyUUID);
   });
-  test('redeem giftcard with wrong currency', async () => {
+  test('when redeeming giftcard with wrong currency, it should throw error with code CuurencyNotMatch', async () => {
     const dummyUUID = 'It-is-a-dummy-uuid';
     jest.spyOn(DefaultCartService.prototype, 'getCart').mockReturnValue(Promise.resolve(mockGetCartResult()));
     jest.spyOn(DefaultCartService.prototype, 'getPaymentAmount').mockReturnValue(Promise.resolve(mockGetPaymentAmount));
@@ -156,7 +160,7 @@ describe('mock-giftcard.service', () => {
       expect((error as MockCustomError).message).toStrictEqual('cart and gift card currency do not match');
     }
   });
-  test('redeem giftcard with correct currency but failed the redemption', async () => {
+  test('when redeem giftcard with correct currency but failed the redemption, it should return Failure as result', async () => {
     const dummyUUID = 'It-is-a-dummy-uuid';
     jest.spyOn(DefaultCartService.prototype, 'getCart').mockReturnValue(Promise.resolve(mockGetCartResult()));
     jest.spyOn(DefaultCartService.prototype, 'getPaymentAmount').mockReturnValue(Promise.resolve(mockGetPaymentAmount));
@@ -184,5 +188,32 @@ describe('mock-giftcard.service', () => {
     expect(result.result).toStrictEqual('Failure');
     expect(result.paymentId).toStrictEqual('123456');
     expect(result.redemptionId).toStrictEqual('');
+  });
+
+  test('when refund giftcard successfully, it should return approved as outcome', async () => {
+    const modifyPaymentOpts: ModifyPayment = {
+      paymentId: 'dummy-paymentId',
+      data: {
+        actions: [
+          {
+            action: 'refundPayment',
+            amount: {
+              centAmount: 150000,
+              currencyCode: 'USD',
+            },
+          },
+        ],
+      },
+    };
+    jest.spyOn(DefaultPaymentService.prototype, 'getPayment').mockReturnValue(Promise.resolve(mockGetPaymentResultForRollbackRedemption));
+    jest
+      .spyOn(DefaultPaymentService.prototype, 'updatePayment')
+      .mockReturnValue(Promise.resolve(mockUpdatePaymentResultForRollbackRedemption));
+    jest
+      .spyOn(DefaultPaymentService.prototype, 'updatePayment')
+      .mockReturnValue(Promise.resolve(mockUpdatePaymentResultForRollbackRedemption));
+
+    const result = await mockGiftCardService.modifyPayment(modifyPaymentOpts);
+    expect(result?.outcome).toStrictEqual('approved');
   });
 });
