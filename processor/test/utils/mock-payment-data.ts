@@ -22,9 +22,6 @@ export const mockCreatePaymentResult: Payment = {
   anonymousId: '',
 };
 
-
-
-
 export const mockUpdatePaymentResult: Payment = {
   id: '123456',
   version: 3,
@@ -57,7 +54,7 @@ export const mockUpdatePaymentResult: Payment = {
   anonymousId: '',
 };
 
-export const mockGetPaymentResultForRollbackRedemption: Payment = mockUpdatePaymentResult
+export const mockGetPaymentResultForRollbackRedemption: Payment = mockUpdatePaymentResult;
 
 export const mockUpdatePaymentResultForRollbackRedemption: Payment = {
   id: '123456',

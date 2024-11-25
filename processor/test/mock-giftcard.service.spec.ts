@@ -4,13 +4,16 @@ import { MockGiftCardService, MockGiftCardServiceOptions } from '../src/services
 import { DefaultCartService } from '@commercetools/connect-payments-sdk/dist/commercetools/services/ct-cart.service';
 import { DefaultPaymentService } from '@commercetools/connect-payments-sdk/dist/commercetools/services/ct-payment.service';
 import { mockGetCartResult, mockGetPaymentAmount } from './utils/mock-cart-data';
-import { mockUpdatePaymentResult, mockCreatePaymentResult, mockGetPaymentResultForRollbackRedemption, mockUpdatePaymentResultForRollbackRedemption } from './utils/mock-payment-data';
+import {
+  mockUpdatePaymentResult,
+  mockCreatePaymentResult,
+  mockGetPaymentResultForRollbackRedemption,
+  mockUpdatePaymentResultForRollbackRedemption,
+} from './utils/mock-payment-data';
 import { GiftCardCodeType } from '../src/clients/types/mock-giftcard.client.type';
 import { RedeemRequestDTO } from '../src/dtos/mock-giftcards.dto';
 import { MockCustomError } from '../src/errors/mock-api.error';
-import {
-  ModifyPayment,
-} from '../src/services/types/operation.type';
+import { ModifyPayment } from '../src/services/types/operation.type';
 
 import crypto from 'crypto';
 describe('mock-giftcard.service', () => {
@@ -205,7 +208,9 @@ describe('mock-giftcard.service', () => {
         ],
       },
     };
-    jest.spyOn(DefaultPaymentService.prototype, 'getPayment').mockReturnValue(Promise.resolve(mockGetPaymentResultForRollbackRedemption));
+    jest
+      .spyOn(DefaultPaymentService.prototype, 'getPayment')
+      .mockReturnValue(Promise.resolve(mockGetPaymentResultForRollbackRedemption));
     jest
       .spyOn(DefaultPaymentService.prototype, 'updatePayment')
       .mockReturnValue(Promise.resolve(mockUpdatePaymentResultForRollbackRedemption));
