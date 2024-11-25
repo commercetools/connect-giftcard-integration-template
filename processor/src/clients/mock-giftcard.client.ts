@@ -87,8 +87,13 @@ export class GiftCardClient {
     };
   }
   public async rollback(redemptionReference: string): Promise<MockClientRollbackResponse> {
+    if (redemptionReference.includes('-'))
+      return {
+        result: 'SUCCESS',
+        id: redemptionReference,
+      };
     return {
-      result: 'SUCCESS',
+      result: 'FAILED',
       id: redemptionReference,
     };
   }

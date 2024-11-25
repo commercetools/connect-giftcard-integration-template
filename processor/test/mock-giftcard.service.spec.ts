@@ -221,4 +221,39 @@ describe('mock-giftcard.service', () => {
     const result = await mockGiftCardService.modifyPayment(modifyPaymentOpts);
     expect(result?.outcome).toStrictEqual('approved');
   });
+
+  test('when refund giftcard failed, it should return rejected as outcome', async () => {
+    const modifyPaymentOpts: ModifyPayment = {
+      paymentId: 'dummy-paymentId',
+      data: {
+        actions: [
+          {
+            action: 'refundPayment',
+            amount: {
+              centAmount: 150000,
+              currencyCode: 'USD',
+            },
+          },
+        ],
+      },
+    };
+    // Mock a payment result with invalid redemption reference from giftcard service provider
+    const mockPaymentWithIncorrectRedemptionRef = {
+      ...mockGetPaymentResultForRollbackRedemption,
+      interfaceId: 'ABCDEF',
+    };
+
+    jest
+      .spyOn(DefaultPaymentService.prototype, 'getPayment')
+      .mockReturnValue(Promise.resolve(mockPaymentWithIncorrectRedemptionRef));
+    jest
+      .spyOn(DefaultPaymentService.prototype, 'updatePayment')
+      .mockReturnValue(Promise.resolve(mockUpdatePaymentResultForRollbackRedemption));
+    jest
+      .spyOn(DefaultPaymentService.prototype, 'updatePayment')
+      .mockReturnValue(Promise.resolve(mockUpdatePaymentResultForRollbackRedemption));
+
+    const result = await mockGiftCardService.modifyPayment(modifyPaymentOpts);
+    expect(result?.outcome).toStrictEqual('rejected');
+  });
 });
