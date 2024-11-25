@@ -43,7 +43,7 @@ export const operationsRoute = async (fastify: FastifyInstance, opts: FastifyPlu
   fastify.post<{
     Body: PaymentIntentRequestSchemaDTO;
     Reply: PaymentIntentResponseSchemaDTO;
-    Params: { $id: string };
+    Params: { id: string };
   }>(
     '/payment-intents/:id',
     {
@@ -67,7 +67,7 @@ export const operationsRoute = async (fastify: FastifyInstance, opts: FastifyPlu
       },
     },
     async (request, reply) => {
-      const id = request.params.$id;
+      const { id } = request.params;
       const response: PaymentIntentResponseSchemaDTO = await opts.giftCardService.modifyPayment({
         paymentId: id,
         data: request.body,
