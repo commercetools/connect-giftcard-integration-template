@@ -25,6 +25,11 @@ export type MockClientRedeemResponse = {
   };
 };
 
+export type MockClientRollbackResponse = {
+  result: string;
+  id: string;
+};
+
 export enum GiftCardCodeType {
   EXPIRED = 'Expired',
   GENERIC_ERROR = 'GenericError',

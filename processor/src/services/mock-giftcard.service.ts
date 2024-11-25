@@ -11,7 +11,9 @@ import {
   CapturePaymentRequest,
   PaymentProviderModificationResponse,
   StatusResponse,
+  RefundPaymentRequest,
 } from './types/operation.type';
+import { PaymentModificationStatus } from '../dtos/operations/payment-intents.dto';
 import { RedeemRequestDTO } from '../dtos/mock-giftcards.dto';
 import { getConfig } from '../config/config';
 import { appLogger, paymentSDK } from '../payment-sdk';
@@ -217,7 +219,19 @@ export class MockGiftCardService extends AbstractGiftCardService {
     });
   }
 
-  async refundPayment(): Promise<void> {
-    // TODO : implement refund logic with mock client
+  async refundPayment(request: RefundPaymentRequest): Promise<PaymentProviderModificationResponse> {
+    const ctPayment = await this.ctPaymentService.getPayment({
+      id: request.payment.id,
+    });
+    const redemptionId = ctPayment.interfaceId || '';
+
+    const mockGiftCardClient = new MockGiftCardClient(ctPayment.amountPlanned.currencyCode);
+    const rollbackResult = await mockGiftCardClient.rollback(redemptionId);
+
+    return {
+      outcome:
+        rollbackResult.result === 'SUCCESS' ? PaymentModificationStatus.APPROVED : PaymentModificationStatus.REJECTED,
+      pspReference: rollbackResult.id,
+    };
   }
 }

@@ -12,8 +12,13 @@ import {
   PaymentProviderModificationResponse,
   RefundPaymentRequest,
   StatusResponse,
+  ModifyPayment,
 } from './types/operation.type';
-import { AmountSchemaDTO, PaymentModificationStatus } from '../dtos/operations/payment-intents.dto';
+import {
+  AmountSchemaDTO,
+  PaymentModificationStatus,
+  PaymentIntentResponseSchemaDTO,
+} from '../dtos/operations/payment-intents.dto';
 import { log } from '../libs/logger';
 import { BalanceResponseSchemaDTO, RedeemRequestDTO, RedeemResponseDTO } from '../dtos/mock-giftcards.dto';
 
@@ -69,10 +74,48 @@ export abstract class AbstractGiftCardService {
    * @param request
    * @returns
    */
-  abstract refundPayment(request: RefundPaymentRequest): Promise<void>;
+  abstract refundPayment(request: RefundPaymentRequest): Promise<PaymentProviderModificationResponse>;
 
-  public async modifyPayment(): Promise<void> {
-    // TODO : implement modify payment logic
+  public async modifyPayment(opts: ModifyPayment): Promise<PaymentIntentResponseSchemaDTO> {
+    const ctPayment = await this.ctPaymentService.getPayment({
+      id: opts.paymentId,
+    });
+
+    const modifyPaymentAction = opts.data.actions[0];
+
+    let requestAmount!: AmountSchemaDTO;
+    if (modifyPaymentAction.action != 'cancelPayment') {
+      requestAmount = modifyPaymentAction.amount;
+    } else {
+      requestAmount = ctPayment.amountPlanned;
+    }
+
+    const transactionType = this.getPaymentTransactionType(modifyPaymentAction.action);
+
+    let updatedPayment = await this.ctPaymentService.updatePayment({
+      id: ctPayment.id,
+      transaction: {
+        type: transactionType,
+        amount: requestAmount,
+        state: 'Initial',
+      },
+    });
+
+    const res = await this.processPaymentModification(updatedPayment, transactionType, requestAmount);
+
+    updatedPayment = await this.ctPaymentService.updatePayment({
+      id: ctPayment.id,
+      transaction: {
+        type: transactionType,
+        amount: requestAmount,
+        interactionId: res.pspReference,
+        state: this.convertPaymentModificationOutcomeToState(res.outcome),
+      },
+    });
+
+    return {
+      outcome: res.outcome,
+    };
   }
 
   protected getPaymentTransactionType(action: string): string {

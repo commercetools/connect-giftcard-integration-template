@@ -2,6 +2,7 @@ import {
   MockClientBalanceResponse,
   MockClientRedeemRequest,
   MockClientRedeemResponse,
+  MockClientRollbackResponse,
   GiftCardCodeType,
 } from './types/mock-giftcard.client.type';
 
@@ -83,6 +84,12 @@ export class GiftCardClient {
       resultCode: 'FAILURE',
       code: request.code,
       amount: request.amount,
+    };
+  }
+  public async rollback(redemptionReference: string): Promise<MockClientRollbackResponse> {
+    return {
+      result: 'SUCCESS',
+      id: redemptionReference,
     };
   }
 }
