@@ -10,11 +10,10 @@ import {
   mockGetPaymentResultForRollbackRedemption,
   mockUpdatePaymentResultForRollbackRedemption,
 } from './utils/mock-payment-data';
-import { GiftCardCodeType } from '../src/clients/types/mock-giftcard.client.type';
+import { GiftCardCodeType, RedemptionReferenceType } from '../src/clients/types/mock-giftcard.client.type';
 import { RedeemRequestDTO } from '../src/dtos/mock-giftcards.dto';
 import { MockCustomError } from '../src/errors/mock-api.error';
 import { ModifyPayment } from '../src/services/types/operation.type';
-
 import crypto from 'crypto';
 describe('mock-giftcard.service', () => {
   // Please customize test cases below
@@ -240,7 +239,7 @@ describe('mock-giftcard.service', () => {
     // Mock a payment result with invalid redemption reference from giftcard service provider
     const mockPaymentWithIncorrectRedemptionRef = {
       ...mockGetPaymentResultForRollbackRedemption,
-      interfaceId: 'ABCDEF',
+      interfaceId: RedemptionReferenceType.REDEMPTION_REF_INVALID,
     };
 
     jest

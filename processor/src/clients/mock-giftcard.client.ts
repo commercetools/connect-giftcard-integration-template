@@ -4,6 +4,7 @@ import {
   MockClientRedeemResponse,
   MockClientRollbackResponse,
   GiftCardCodeType,
+  RedemptionReferenceType,
 } from './types/mock-giftcard.client.type';
 
 import { randomUUID } from 'node:crypto';
@@ -87,7 +88,7 @@ export class GiftCardClient {
     };
   }
   public async rollback(redemptionReference: string): Promise<MockClientRollbackResponse> {
-    if (redemptionReference.includes('-'))
+    if (redemptionReference === RedemptionReferenceType.REDEMPTION_REF_VALID)
       return {
         result: 'SUCCESS',
         id: redemptionReference,

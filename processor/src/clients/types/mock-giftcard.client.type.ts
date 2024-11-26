@@ -37,3 +37,12 @@ export enum GiftCardCodeType {
   CURRENCY_NOT_MATCH = 'CurrencyNotMatch',
   NOT_FOUND = 'NotFound',
 }
+
+/* Mock mechanism to differentiate scenarios of redemption rollback.
+ *  It is supposed that a valid redemption rollback should be with redemption ID as 'redemption-ref-valid'
+ */
+
+export enum RedemptionReferenceType {
+  REDEMPTION_REF_VALID = 'redemption-ref-valid',
+  REDEMPTION_REF_INVALID = 'redemption-ref-invalid',
+}

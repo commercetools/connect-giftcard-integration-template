@@ -1,4 +1,5 @@
 import { Payment } from '@commercetools/connect-payments-sdk';
+import { RedemptionReferenceType } from '../../src/clients/types/mock-giftcard.client.type';
 
 export const mockCreatePaymentResult: Payment = {
   id: '123456',
@@ -25,7 +26,7 @@ export const mockCreatePaymentResult: Payment = {
 export const mockUpdatePaymentResult: Payment = {
   id: '123456',
   version: 3,
-  interfaceId: 'mock-redemption-ref',
+  interfaceId: RedemptionReferenceType.REDEMPTION_REF_VALID,
   createdAt: '2024-01-01T00:00:00z',
   lastModifiedAt: '2024-01-01T00:00:00z',
   amountPlanned: {
@@ -46,7 +47,7 @@ export const mockUpdatePaymentResult: Payment = {
         centAmount: 100,
         fractionDigits: 2,
       },
-      interactionId: 'mock-redemption-ref',
+      interactionId: RedemptionReferenceType.REDEMPTION_REF_VALID,
       state: 'Success',
     },
   ],
@@ -59,7 +60,7 @@ export const mockGetPaymentResultForRollbackRedemption: Payment = mockUpdatePaym
 export const mockUpdatePaymentResultForRollbackRedemption: Payment = {
   id: '123456',
   version: 3,
-  interfaceId: 'mock-redemption-ref',
+  interfaceId: RedemptionReferenceType.REDEMPTION_REF_VALID,
   createdAt: '2024-01-01T00:00:00z',
   lastModifiedAt: '2024-01-01T00:00:00z',
   amountPlanned: {
@@ -80,7 +81,7 @@ export const mockUpdatePaymentResultForRollbackRedemption: Payment = {
         centAmount: 100,
         fractionDigits: 2,
       },
-      interactionId: 'mock-redemption-ref',
+      interactionId: RedemptionReferenceType.REDEMPTION_REF_VALID,
       state: 'Success',
     },
     {
@@ -92,7 +93,7 @@ export const mockUpdatePaymentResultForRollbackRedemption: Payment = {
         centAmount: 100,
         fractionDigits: 2,
       },
-      interactionId: 'mock-redemption-ref',
+      interactionId: RedemptionReferenceType.REDEMPTION_REF_VALID,
       state: 'Success',
     },
   ],
