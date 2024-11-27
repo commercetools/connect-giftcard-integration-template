@@ -10,6 +10,7 @@ import {
   PaymentIntentRequestSchema,
   PaymentIntentRequestSchemaDTO,
   PaymentIntentResponseSchema,
+  PaymentIntentResponseSchemaDTO,
 } from '../dtos/operations/payment-intents.dto';
 import { StatusResponseSchema, StatusResponseSchemaDTO } from '../dtos/operations/status.dto';
 import { AbstractGiftCardService } from '../services/abstract-giftcard.service';
@@ -41,8 +42,8 @@ export const operationsRoute = async (fastify: FastifyInstance, opts: FastifyPlu
 
   fastify.post<{
     Body: PaymentIntentRequestSchemaDTO;
-    Reply: void;
-    Params: { $id: string };
+    Reply: PaymentIntentResponseSchemaDTO;
+    Params: { id: string };
   }>(
     '/payment-intents/:id',
     {
@@ -66,8 +67,12 @@ export const operationsRoute = async (fastify: FastifyInstance, opts: FastifyPlu
       },
     },
     async (request, reply) => {
-      await opts.giftCardService.modifyPayment();
-      return reply.status(200).send('done');
+      const { id } = request.params;
+      const response: PaymentIntentResponseSchemaDTO = await opts.giftCardService.modifyPayment({
+        paymentId: id,
+        data: request.body,
+      });
+      return reply.status(200).send(response);
     },
   );
 };

@@ -2,11 +2,16 @@ import {
   MockClientBalanceResponse,
   MockClientRedeemRequest,
   MockClientRedeemResponse,
+  MockClientRollbackResponse,
   GiftCardCodeType,
+  RedemptionReferenceType,
 } from './types/mock-giftcard.client.type';
 
 import { randomUUID } from 'node:crypto';
 
+/**
+ * GiftCardClient acts as a mock Client SDK API provided by external gift card service providers. Mock Client SDK is used due to no actual communication involved in this gift card connector template. If SDK is available by specific gift card service provider, the SDK should be invoked directly in service layer and this mock client will be no longer in use.
+ */
 export class GiftCardClient {
   private currencyCode: string;
   public constructor(currencyCode: string) {
@@ -83,6 +88,17 @@ export class GiftCardClient {
       resultCode: 'FAILURE',
       code: request.code,
       amount: request.amount,
+    };
+  }
+  public async rollback(redemptionReference: string): Promise<MockClientRollbackResponse> {
+    if (redemptionReference === RedemptionReferenceType.REDEMPTION_REF_VALID)
+      return {
+        result: 'SUCCESS',
+        id: redemptionReference,
+      };
+    return {
+      result: 'FAILED',
+      id: redemptionReference,
     };
   }
 }

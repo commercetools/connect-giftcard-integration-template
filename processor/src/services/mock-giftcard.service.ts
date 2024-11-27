@@ -11,7 +11,9 @@ import {
   CapturePaymentRequest,
   PaymentProviderModificationResponse,
   StatusResponse,
+  RefundPaymentRequest,
 } from './types/operation.type';
+import { PaymentModificationStatus } from '../dtos/operations/payment-intents.dto';
 import { RedeemRequestDTO } from '../dtos/mock-giftcards.dto';
 import { getConfig } from '../config/config';
 import { appLogger, paymentSDK } from '../payment-sdk';
@@ -31,6 +33,9 @@ import { RedemptionConverter } from './converters/redemption-converter';
 
 import packageJSON from '../../package.json';
 
+/**
+ * MockGiftCardService acts as a sample service class to integrate with commercetools composable platform and external gift card service provider. Since no actual communication with external gift card service provider in this connector template, further customization is required if SDK APIs are provided by gift card service provider.
+ */
 export type MockGiftCardServiceOptions = {
   ctCartService: CommercetoolsCartService;
   ctPaymentService: CommercetoolsPaymentService;
@@ -217,7 +222,19 @@ export class MockGiftCardService extends AbstractGiftCardService {
     });
   }
 
-  async refundPayment(): Promise<void> {
-    // TODO : implement refund logic with mock client
+  async refundPayment(request: RefundPaymentRequest): Promise<PaymentProviderModificationResponse> {
+    const ctPayment = await this.ctPaymentService.getPayment({
+      id: request.payment.id,
+    });
+    const redemptionId = ctPayment.interfaceId || '';
+
+    const mockGiftCardClient = new MockGiftCardClient(ctPayment.amountPlanned.currencyCode);
+    const rollbackResult = await mockGiftCardClient.rollback(redemptionId);
+
+    return {
+      outcome:
+        rollbackResult.result === 'SUCCESS' ? PaymentModificationStatus.APPROVED : PaymentModificationStatus.REJECTED,
+      pspReference: rollbackResult.id,
+    };
   }
 }
