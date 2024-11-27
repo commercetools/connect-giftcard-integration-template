@@ -19,6 +19,9 @@ type RoutesOptions = {
   sessionQueryParamAuthHook: SessionQueryParamAuthenticationHook;
 };
 
+/**
+ * MockGiftCardServiceRoutes is used to expose endpoints for giftcard management. Since the required requests/responses/parameters may vary among different gift card service providers, here we provide sample routes for further customization.
+ */
 export const mockGiftCardServiceRoutes = async (
   fastify: FastifyInstance,
 

@@ -33,6 +33,9 @@ import { RedemptionConverter } from './converters/redemption-converter';
 
 import packageJSON from '../../package.json';
 
+/**
+ * MockGiftCardService acts as a sample service class to integrate with commercetools composable platform and external gift card service provider. Since no actual communication with external gift card service provider in this connector template, further customization is required if SDK APIs are provided by gift card service provider.
+ */
 export type MockGiftCardServiceOptions = {
   ctCartService: CommercetoolsCartService;
   ctPaymentService: CommercetoolsPaymentService;

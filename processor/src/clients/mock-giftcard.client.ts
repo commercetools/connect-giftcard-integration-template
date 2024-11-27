@@ -9,6 +9,9 @@ import {
 
 import { randomUUID } from 'node:crypto';
 
+/**
+ * GiftCardClient acts as a mock Client SDK API provided by external gift card service providers. Mock Client SDK is used due to no actual communication involved in this gift card connector template. If SDK is available by specific gift card service provider, the SDK should be invoked directly in service layer and this mock client will be no longer in use.
+ */
 export class GiftCardClient {
   private currencyCode: string;
   public constructor(currencyCode: string) {
