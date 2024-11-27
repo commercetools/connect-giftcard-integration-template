@@ -5,6 +5,7 @@ import {
   MockClientRollbackResponse,
   GiftCardCodeType,
   RedemptionReferenceType,
+  MockClientStatusResponse,
 } from './types/mock-giftcard.client.type';
 
 import { randomUUID } from 'node:crypto';
@@ -13,12 +14,15 @@ import { randomUUID } from 'node:crypto';
  * GiftCardClient acts as a mock Client SDK API provided by external gift card service providers. Mock Client SDK is used due to no actual communication involved in this gift card connector template. If SDK is available by specific gift card service provider, the SDK should be invoked directly in service layer and this mock client will be no longer in use.
  */
 export class GiftCardClient {
-  private currencyCode: string;
-  public constructor(currencyCode: string) {
-    this.currencyCode = currencyCode;
+  public constructor() {}
+
+  public async healthcheck(): Promise<MockClientStatusResponse> {
+    return {
+      status: 'OK',
+    };
   }
 
-  public async balance(giftCardCode: string): Promise<MockClientBalanceResponse> {
+  public async balance(currencyCode: string, giftCardCode: string): Promise<MockClientBalanceResponse> {
     /** In mock example, we categorize different use cases based on the input giftcard code
      *
      * "Valid-<amount>-<currency>" - It represents a valid giftcard with specified balance and currency.
@@ -45,7 +49,7 @@ export class GiftCardClient {
         const giftCardCentAmount = giftCardCodeBreakdown[1];
         const giftCardCurrencyCode = giftCardCodeBreakdown[2];
 
-        if (this.currencyCode !== giftCardCurrencyCode) {
+        if (currencyCode !== giftCardCurrencyCode) {
           return {
             message: 'Currency does not match.',
             code: GiftCardCodeType.CURRENCY_NOT_MATCH,

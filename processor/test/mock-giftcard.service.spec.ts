@@ -13,8 +13,12 @@ import {
 import { GiftCardCodeType, RedemptionReferenceType } from '../src/clients/types/mock-giftcard.client.type';
 import { RedeemRequestDTO } from '../src/dtos/mock-giftcards.dto';
 import { MockCustomError } from '../src/errors/mock-api.error';
-import { ModifyPayment } from '../src/services/types/operation.type';
+import { ModifyPayment, StatusResponse } from '../src/services/types/operation.type';
+import * as StatusHandler from '@commercetools/connect-payments-sdk/dist/api/handlers/status.handler';
+
+import { HealthCheckResult } from '@commercetools/connect-payments-sdk';
 import crypto from 'crypto';
+import { AbstractGiftCardService } from '../src/services/abstract-giftcard.service';
 describe('mock-giftcard.service', () => {
   // Please customize test cases below
   const opts: MockGiftCardServiceOptions = {
@@ -30,6 +34,34 @@ describe('mock-giftcard.service', () => {
 
   afterEach(() => {
     jest.restoreAllMocks();
+  });
+
+  test('getStatus', async () => {
+    const mockHealthCheckFunction: () => Promise<HealthCheckResult> = async () => {
+      const result: HealthCheckResult = {
+        name: 'CoCo Permissions',
+        status: 'DOWN',
+        message: 'CoCo Permissions are not available',
+        details: {},
+      };
+      return result;
+    };
+
+    jest.spyOn(StatusHandler, 'healthCheckCommercetoolsPermissions').mockReturnValue(mockHealthCheckFunction);
+    const mockGiftCardService: AbstractGiftCardService = new MockGiftCardService(opts);
+    const result: StatusResponse = await mockGiftCardService.status();
+
+    expect(result?.status).toBeDefined();
+    expect(result?.checks).toHaveLength(2);
+    expect(result?.status).toStrictEqual('Partially Available');
+    expect(result?.checks[0]?.name).toStrictEqual('CoCo Permissions');
+    expect(result?.checks[0]?.status).toStrictEqual('DOWN');
+    expect(result?.checks[0]?.details).toStrictEqual({});
+    expect(result?.checks[0]?.message).toBeDefined();
+    expect(result?.checks[1]?.name).toStrictEqual('mock giftcard API call');
+    expect(result?.checks[1]?.status).toStrictEqual('UP');
+    expect(result?.checks[1]?.details).toBeDefined();
+    expect(result?.checks[1]?.message).toBeUndefined();
   });
 
   test('When checking balance by inputting valid giftcard, it should return status as Valid', async () => {
