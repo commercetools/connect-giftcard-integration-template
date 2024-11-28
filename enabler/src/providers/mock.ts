@@ -1,7 +1,6 @@
 import { FormBuilder } from '../components/form';
 import { BaseOptions, EnablerOptions, GiftCardEnabler, GiftCardBuilder, PaymentResult } from './definitions';
 
-
 export class MockEnabler implements GiftCardEnabler {
   setupData: Promise<{ baseOptions: BaseOptions }>;
 

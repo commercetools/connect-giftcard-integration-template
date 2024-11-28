@@ -79,7 +79,6 @@
 
         document.addEventListener('DOMContentLoaded', async () => {
           // Fetch connector status
-          console.log('=== Fetch jwt token ===')
           const statusDisplay = document.getElementById('statusDisplay');
           const response = await fetch('http://localhost:9000/jwt/token', {
             method: 'POST',
@@ -94,7 +93,6 @@
           });
 
           const accessToken = await response.json();
-          console.log(accessToken)
           const res = await fetch(`${__VITE_PROCESSOR_URL__}/operations/status`, {
             method: 'GET',
             headers: {

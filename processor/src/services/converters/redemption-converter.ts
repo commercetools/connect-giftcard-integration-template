@@ -20,7 +20,7 @@ export class RedemptionConverter {
     const redemptionResult = opts?.redemptionResult;
     return {
       result: this.convertMockClientResultCode(redemptionResult.resultCode || ''),
-      paymentId: opts?.paymentResult.id || '',
+      paymentReference: opts?.paymentResult.id || '',
       redemptionId: redemptionResult.redemptionReference || '',
     };
   }
