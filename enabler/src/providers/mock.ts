@@ -1,4 +1,6 @@
-import { BaseOptions, EnablerOptions, GiftCardEnabler, PaymentResult } from './definitions';
+import { FormBuilder } from '../components/form';
+import { BaseOptions, EnablerOptions, GiftCardEnabler, GiftCardBuilder, PaymentResult } from './definitions';
+
 
 export class MockEnabler implements GiftCardEnabler {
   setupData: Promise<{ baseOptions: BaseOptions }>;
@@ -29,7 +31,12 @@ export class MockEnabler implements GiftCardEnabler {
     };
   };
 
-  async createGiftCardBuilder(): Promise<void> {
-    console.log('createGiftCardBuilder');
+  async createGiftCardBuilder(): Promise<GiftCardBuilder | never> {
+    const setupData = await this.setupData;
+    if (!setupData) {
+      throw new Error('VoucherifyEnabler not initialized');
+    }
+
+    return new FormBuilder(setupData.baseOptions);
   }
 }

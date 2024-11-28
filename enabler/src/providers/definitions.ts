@@ -63,5 +63,5 @@ export interface GiftCardEnabler {
   /**
    * @throws {Error}
    */
-  createGiftCardBuilder: (type: string) => Promise<void>;
+  createGiftCardBuilder: (type: string) => Promise<GiftCardBuilder | never>;
 }
