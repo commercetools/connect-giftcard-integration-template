@@ -33,7 +33,7 @@ export class MockEnabler implements GiftCardEnabler {
   async createGiftCardBuilder(): Promise<GiftCardBuilder | never> {
     const setupData = await this.setupData;
     if (!setupData) {
-      throw new Error('VoucherifyEnabler not initialized');
+      throw new Error('MockEnabler not initialized');
     }
 
     return new FormBuilder(setupData.baseOptions);

@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Welcome to Voucherify's integration - dev tools</title>
+    <title>Welcome to Gift Card connector template - dev tools</title>
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
@@ -92,7 +92,7 @@
             }),
           });
 
-          const accessToken = await response.json();
+          const accessToken = await response.json();  
           const res = await fetch(`${__VITE_PROCESSOR_URL__}/operations/status`, {
             method: 'GET',
             headers: {
