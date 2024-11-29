@@ -7,6 +7,10 @@ export type MockClientBalanceResponse = {
   };
 };
 
+export type MockClientStatusResponse = {
+  status: 'OK';
+};
+
 export type MockClientRedeemRequest = {
   code: string;
   amount: {

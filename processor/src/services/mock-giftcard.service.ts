@@ -74,12 +74,12 @@ export class MockGiftCardService extends AbstractGiftCardService {
         }),
         async () => {
           try {
-            // TODO: Make request to healthcheck API of external giftcard service provider
+            const healthcheckResult = await new MockGiftCardClient().healthcheck();
             return {
               name: 'mock giftcard API call',
               status: 'UP',
               details: {
-                // TODO : Implement result
+                healthcheckResult,
               },
             };
           } catch (e) {
@@ -88,6 +88,7 @@ export class MockGiftCardService extends AbstractGiftCardService {
               status: 'DOWN',
               message: `Not able to communicate with giftcard service provider API`,
               details: {
+                // TODO do not expose the error
                 error: e,
               },
             };
@@ -109,8 +110,8 @@ export class MockGiftCardService extends AbstractGiftCardService {
     });
     const amountPlanned = await this.ctCartService.getPaymentAmount({ cart: ctCart });
     const cartCurrencyCode = amountPlanned.currencyCode;
-    const mockGiftCardClient = new MockGiftCardClient(cartCurrencyCode);
-    const getBalanceResult: MockClientBalanceResponse = await mockGiftCardClient.balance(code);
+    const mockGiftCardClient = new MockGiftCardClient();
+    const getBalanceResult: MockClientBalanceResponse = await mockGiftCardClient.balance(cartCurrencyCode, code);
 
     return BalanceConverter.convert(getBalanceResult, cartCurrencyCode);
   }
@@ -165,7 +166,7 @@ export class MockGiftCardService extends AbstractGiftCardService {
       paymentId: ctPayment.id,
     });
 
-    const mockGiftCardClient = new MockGiftCardClient(cartCurrencyCode);
+    const mockGiftCardClient = new MockGiftCardClient();
     const request: MockClientRedeemRequest = {
       code: redeemCode,
       amount: redeemAmount,
@@ -228,7 +229,7 @@ export class MockGiftCardService extends AbstractGiftCardService {
     });
     const redemptionId = ctPayment.interfaceId || '';
 
-    const mockGiftCardClient = new MockGiftCardClient(ctPayment.amountPlanned.currencyCode);
+    const mockGiftCardClient = new MockGiftCardClient();
     const rollbackResult = await mockGiftCardClient.rollback(redemptionId);
 
     return {
