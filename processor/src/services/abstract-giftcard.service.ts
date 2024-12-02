@@ -9,15 +9,15 @@ import {
 import {
   CancelPaymentRequest,
   CapturePaymentRequest,
+  ModifyPayment,
   PaymentProviderModificationResponse,
   RefundPaymentRequest,
   StatusResponse,
-  ModifyPayment,
 } from './types/operation.type';
 import {
   AmountSchemaDTO,
-  PaymentModificationStatus,
   PaymentIntentResponseSchemaDTO,
+  PaymentModificationStatus,
 } from '../dtos/operations/payment-intents.dto';
 import { log } from '../libs/logger';
 import { BalanceResponseSchemaDTO, RedeemRequestDTO, RedeemResponseDTO } from '../dtos/mock-giftcards.dto';

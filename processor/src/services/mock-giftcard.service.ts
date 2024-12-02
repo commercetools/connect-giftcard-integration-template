@@ -18,7 +18,7 @@ import { RedeemRequestDTO } from '../dtos/mock-giftcards.dto';
 import { getConfig } from '../config/config';
 import { appLogger, paymentSDK } from '../payment-sdk';
 import { AbstractGiftCardService } from './abstract-giftcard.service';
-import { GiftCardClient as MockGiftCardClient } from '../clients/mock-giftcard.client';
+import { MockAPI } from '../clients/mock-giftcard.client';
 import {
   MockClientBalanceResponse,
   MockClientRedeemRequest,
@@ -43,8 +43,14 @@ export type MockGiftCardServiceOptions = {
 };
 
 export class MockGiftCardService extends AbstractGiftCardService {
+  private balanceConverter: BalanceConverter;
+  private redemptionConverter: RedemptionConverter;
+
   constructor(opts: MockGiftCardServiceOptions) {
     super(opts.ctCartService, opts.ctPaymentService, opts.ctOrderService);
+
+    this.balanceConverter = new BalanceConverter();
+    this.redemptionConverter = new RedemptionConverter();
   }
 
   /**
@@ -74,7 +80,7 @@ export class MockGiftCardService extends AbstractGiftCardService {
         }),
         async () => {
           try {
-            const healthcheckResult = await new MockGiftCardClient().healthcheck();
+            const healthcheckResult = await MockAPI().healthcheck();
             return {
               name: 'mock giftcard API call',
               status: 'UP',
@@ -109,11 +115,18 @@ export class MockGiftCardService extends AbstractGiftCardService {
       id: getCartIdFromContext(),
     });
     const amountPlanned = await this.ctCartService.getPaymentAmount({ cart: ctCart });
-    const cartCurrencyCode = amountPlanned.currencyCode;
-    const mockGiftCardClient = new MockGiftCardClient();
-    const getBalanceResult: MockClientBalanceResponse = await mockGiftCardClient.balance(cartCurrencyCode, code);
 
-    return BalanceConverter.convert(getBalanceResult, cartCurrencyCode);
+    if (getConfig().mockConnectorCurrency !== amountPlanned.currencyCode) {
+      throw new MockCustomError({
+        message: 'cart and gift card currency do not match',
+        code: 400,
+        key: 'CurrencyNotMatch',
+      });
+    }
+
+    const getBalanceResult: MockClientBalanceResponse = await MockAPI().balance(code);
+
+    return this.balanceConverter.convert(getBalanceResult);
   }
 
   async redeem(opts: { data: RedeemRequestDTO }): Promise<RedeemResponseDTO> {
@@ -122,17 +135,10 @@ export class MockGiftCardService extends AbstractGiftCardService {
     });
 
     const amountPlanned = await this.ctCartService.getPaymentAmount({ cart: ctCart });
-    const cartCurrencyCode = amountPlanned.currencyCode;
     const redeemAmount = opts.data.redeemAmount;
     const redeemCode = opts.data.code;
 
-    /* Mock mechanism to obtain the currency covered by the given giftcard.
-     *  It is supposed that a valid giftcard should be with a giftcard code format as "Valid-<amount>-<currency>"
-     */
-    const giftCardCurrencyCode =
-      redeemCode.startsWith('Valid', 0) && redeemCode.split('-').length === 3 ? redeemCode.split('-')[2] : '';
-
-    if (giftCardCurrencyCode !== cartCurrencyCode) {
+    if (getConfig().mockConnectorCurrency !== amountPlanned.currencyCode) {
       throw new MockCustomError({
         message: 'cart and gift card currency do not match',
         code: 400,
@@ -166,13 +172,12 @@ export class MockGiftCardService extends AbstractGiftCardService {
       paymentId: ctPayment.id,
     });
 
-    const mockGiftCardClient = new MockGiftCardClient();
     const request: MockClientRedeemRequest = {
       code: redeemCode,
       amount: redeemAmount,
     };
 
-    const response: MockClientRedeemResponse = await mockGiftCardClient.redeem(request);
+    const response: MockClientRedeemResponse = await MockAPI().redeem(request);
 
     const updatedPayment = await this.ctPaymentService.updatePayment({
       id: ctPayment.id,
@@ -181,10 +186,10 @@ export class MockGiftCardService extends AbstractGiftCardService {
         type: 'Charge',
         amount: ctPayment.amountPlanned,
         interactionId: response.redemptionReference,
-        state: RedemptionConverter.convertMockClientResultCode(response.resultCode),
+        state: this.redemptionConverter.convertMockClientResultCode(response.resultCode),
       },
     });
-    return RedemptionConverter.convert({ redemptionResult: response, paymentResult: updatedPayment });
+    return this.redemptionConverter.convert({ redemptionResult: response, createPaymentResult: updatedPayment });
   }
 
   /**
@@ -229,13 +234,12 @@ export class MockGiftCardService extends AbstractGiftCardService {
     });
     const redemptionId = ctPayment.interfaceId || '';
 
-    const mockGiftCardClient = new MockGiftCardClient();
-    const rollbackResult = await mockGiftCardClient.rollback(redemptionId);
+    const rollbackResult = await MockAPI().rollback(redemptionId);
 
     return {
       outcome:
         rollbackResult.result === 'SUCCESS' ? PaymentModificationStatus.APPROVED : PaymentModificationStatus.REJECTED,
-      pspReference: rollbackResult.id,
+      pspReference: rollbackResult?.id || '',
     };
   }
 }
