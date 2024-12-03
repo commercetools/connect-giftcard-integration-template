@@ -110,6 +110,7 @@ Here you can see the details about various variables in configuration
 - `CTP_SESSION_URL`: The URL for session creation in commercetools platform. Connectors relies on the session created to be able to share information between enabler and processor. The default value is `https://session.europe-west1.gcp.commercetools.com`.
 - `CTP_JWKS_URL`: The URL which provides JSON Web Key Set. Default value is `https://mc-api.europe-west1.gcp.commercetools.com/.well-known/jwks.json`
 - `CTP_JWT_ISSUER`: The issuer inside JSON Web Token which is required in JWT validation process. Default value is `https://mc-api.europe-west1.gcp.commercetools.com`
+- `MOCK_CONNECTOR_CURRENCY`: The currency code assigned to the deployment of this connector template. Remind that each deployment supports single currency.
 
 ## Development
 
