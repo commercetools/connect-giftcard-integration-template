@@ -32,6 +32,9 @@ deployAs:
           description: JWT Issuer for jwt validation (example - https://mc-api.europe-west1.gcp.commercetools.com)
           required: true
           default: https://mc-api.europe-west1.gcp.commercetools.com   
+        - key: MOCK_CONNECTOR_CURRENCY
+          description: Currency Code assigned to a single deployment of this connector template
+          required: true
       securedConfiguration:
         - key: CTP_CLIENT_SECRET
           description: commercetools client secret
