@@ -4,7 +4,7 @@ import { RedeemResponseDTO } from '../../dtos/mock-giftcards.dto';
 import { Payment } from '@commercetools/connect-payments-sdk';
 
 export class RedemptionConverter {
-  public static convertMockClientResultCode(resultCode: string) {
+  public convertMockClientResultCode(resultCode: string) {
     if (resultCode === 'SUCCESS') {
       return 'Success';
     } else if (resultCode === 'FAILURE') {
@@ -13,15 +13,15 @@ export class RedemptionConverter {
     return 'Initial';
   }
 
-  public static convert(opts: {
+  public convert(opts: {
     redemptionResult: MockClientRedeemResponse;
-    paymentResult: Payment;
+    createPaymentResult: Payment;
   }): RedeemResponseDTO {
-    const redemptionResult = opts?.redemptionResult;
+    const redemptionResultObj = opts?.redemptionResult;
     return {
-      result: this.convertMockClientResultCode(redemptionResult.resultCode || ''),
-      paymentReference: opts?.paymentResult.id || '',
-      redemptionId: redemptionResult.redemptionReference || '',
+      result: this.convertMockClientResultCode(redemptionResultObj.resultCode || ''),
+      paymentReference: opts?.createPaymentResult.id || '',
+      redemptionId: redemptionResultObj.redemptionReference || '',
     };
   }
 }

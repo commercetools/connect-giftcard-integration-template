@@ -31,7 +31,7 @@ export type MockClientRedeemResponse = {
 
 export type MockClientRollbackResponse = {
   result: string;
-  id: string;
+  id?: string;
 };
 
 export enum GiftCardCodeType {
@@ -40,6 +40,7 @@ export enum GiftCardCodeType {
   VALID = 'Valid',
   CURRENCY_NOT_MATCH = 'CurrencyNotMatch',
   NOT_FOUND = 'NotFound',
+  INVALID = 'Invalid',
 }
 
 /* Mock mechanism to differentiate scenarios of redemption rollback.

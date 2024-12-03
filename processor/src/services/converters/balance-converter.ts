@@ -2,7 +2,7 @@ import { MockClientBalanceResponse, GiftCardCodeType } from '../../clients/types
 import { BalanceResponseSchemaDTO } from '../../dtos/mock-giftcards.dto';
 import { MockCustomError } from '../../errors/mock-api.error';
 export class BalanceConverter {
-  public static convert(opts: MockClientBalanceResponse, cartCurrencyCode: string): BalanceResponseSchemaDTO {
+  public convert(opts: MockClientBalanceResponse): BalanceResponseSchemaDTO {
     switch (opts?.code) {
       case GiftCardCodeType.VALID:
         return {
@@ -10,8 +10,8 @@ export class BalanceConverter {
             state: GiftCardCodeType.VALID,
           },
           amount: {
-            centAmount: opts?.amount?.centAmount || 0,
-            currencyCode: opts?.amount?.currencyCode || cartCurrencyCode,
+            centAmount: opts?.amount!.centAmount,
+            currencyCode: opts.amount!.currencyCode,
           },
         };
 

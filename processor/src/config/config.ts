@@ -10,6 +10,8 @@ export const config = {
   sessionUrl: process.env.CTP_SESSION_URL || 'https://session.europe-west1.gcp.commercetools.com/',
   healthCheckTimeout: parseInt(process.env.HEALTH_CHECK_TIMEOUT || '5000'),
 
+  mockConnectorCurrency: process.env.MOCK_CONNECTOR_CURRENCY || '',
+
   // Required by logger
   loggerLevel: process.env.LOGGER_LEVEL || 'info',
 };
