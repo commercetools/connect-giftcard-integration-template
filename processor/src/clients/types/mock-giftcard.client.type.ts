@@ -32,6 +32,7 @@ export type MockClientRedeemResponse = {
 export type MockClientRollbackResponse = {
   result: string;
   id?: string;
+  amount?: number;
 };
 
 export enum GiftCardCodeType {

@@ -240,6 +240,10 @@ export class MockGiftCardService extends AbstractGiftCardService {
       outcome:
         rollbackResult.result === 'SUCCESS' ? PaymentModificationStatus.APPROVED : PaymentModificationStatus.REJECTED,
       pspReference: rollbackResult?.id || '',
+      amountRefunded: {
+        currencyCode: ctPayment.amountPlanned.currencyCode,
+        centAmount: rollbackResult.amount || 0,
+      },
     };
   }
 }

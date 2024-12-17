@@ -124,6 +124,7 @@ export class GiftCardClient {
     return this.promisify({
       result: 'SUCCESS',
       id: `mock-connector-rollback-id-${randomUUID()}`,
+      amount: 1000,
     });
   }
 
