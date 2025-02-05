@@ -130,13 +130,20 @@ export class MockGiftCardService extends AbstractGiftCardService {
   }
 
   async redeem(opts: { data: RedeemRequestDTO }): Promise<RedeemResponseDTO> {
+    const redeemCode = opts.data.code;
+    if (redeemCode && redeemCode.startsWith('Valid-00')) {
+      throw new MockCustomError({
+        message: 'The gift card is expired.',
+        code: 400,
+        key: GiftCardCodeType.EXPIRED,
+      });
+    }
     const ctCart = await this.ctCartService.getCart({
       id: getCartIdFromContext(),
     });
 
     const amountPlanned = await this.ctCartService.getPaymentAmount({ cart: ctCart });
     const redeemAmount = opts.data.redeemAmount;
-    const redeemCode = opts.data.code;
 
     if (getConfig().mockConnectorCurrency !== amountPlanned.currencyCode) {
       throw new MockCustomError({
@@ -240,10 +247,6 @@ export class MockGiftCardService extends AbstractGiftCardService {
       outcome:
         rollbackResult.result === 'SUCCESS' ? PaymentModificationStatus.APPROVED : PaymentModificationStatus.REJECTED,
       pspReference: rollbackResult?.id || '',
-      amountRefunded: {
-        currencyCode: ctPayment.amountPlanned.currencyCode,
-        centAmount: rollbackResult.amount || 0,
-      },
     };
   }
 }

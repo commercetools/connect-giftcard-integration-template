@@ -189,20 +189,24 @@ describe('mock-giftcard.service', () => {
     jest.spyOn(DefaultPaymentService.prototype, 'updatePayment').mockResolvedValue(updatePaymentResultOk);
     jest.spyOn(crypto, 'randomUUID').mockReturnValue(dummyUUID);
 
-    // Act
-    const result = mockGiftCardService.redeem({
-      data: {
-        code: '34567',
-        redeemAmount: {
-          centAmount: 1,
-          currencyCode: 'USD',
+    try {
+      await mockGiftCardService.redeem({
+        data: {
+          code: '34567',
+          redeemAmount: {
+            centAmount: 1,
+            currencyCode: 'USD',
+          },
         },
-      },
-    });
-
-    // Assert
-    await expect(result).rejects.toThrow(MockCustomError);
-    await expect(result).rejects.toThrowError('cart and gift card currency do not match');
+      });
+      throw new Error('This should not be reached');
+    } catch (error) {
+      if (error instanceof MockCustomError) {
+        expect(error.message).toBe('cart and gift card currency do not match');
+      } else {
+        throw new Error('Unexpected error type');
+      }
+    }
   });
 
   test('when redeem giftcard with correct currency but failed the redemption, it should return Failure as result', async () => {
@@ -226,6 +230,34 @@ describe('mock-giftcard.service', () => {
     expect(result.result).toStrictEqual('Failure');
     expect(result.paymentReference).toStrictEqual('123456');
     expect(result.redemptionId).toStrictEqual('');
+  });
+
+  test('it should throw a MockCustomError with Valid-00 to test a giftcard that passes balance but fails to redeem', async () => {
+    setupMockConfig({ mockConnectorCurrency: 'USD' });
+    const dummyUUID = 'It-is-a-dummy-uuid';
+    jest.spyOn(DefaultPaymentService.prototype, 'createPayment').mockResolvedValue(createPaymentResultOk);
+    jest.spyOn(DefaultCartService.prototype, 'addPayment').mockResolvedValue(getCartOK());
+    jest.spyOn(DefaultPaymentService.prototype, 'updatePayment').mockResolvedValue(updatePaymentResultOk);
+    jest.spyOn(crypto, 'randomUUID').mockReturnValue(dummyUUID);
+
+    try {
+      await mockGiftCardService.redeem({
+        data: {
+          code: 'Valid-00100-USD',
+          redeemAmount: {
+            centAmount: 0,
+            currencyCode: 'USD',
+          },
+        },
+      });
+      throw new Error('This should not be reached');
+    } catch (error) {
+      if (error instanceof MockCustomError) {
+        expect(error.message).toBe('The gift card is expired.');
+      } else {
+        throw new Error('Unexpected error type');
+      }
+    }
   });
 
   describe('modifyPayment', () => {

@@ -7,7 +7,15 @@ import {
   PaymentResult,
 } from '../providers/definitions';
 import { BaseComponentBuilder, DefaultComponent } from './definitions';
-import { addFormFieldsEventListeners, fieldIds, getInput } from './utils';
+import {
+  addFormFieldsEventListeners,
+  fieldIds,
+  getErrorCode,
+  getInput,
+  handleEnter,
+  hideError,
+  showError,
+} from './utils';
 import inputFieldStyles from '../style/inputField.module.scss';
 import I18n from '../i18n';
 import { translations } from '../i18n/translations';
@@ -51,12 +59,22 @@ export class FormComponent extends DefaultComponent {
 
       const jsonResponse = await response.json();
       if (!jsonResponse?.status?.state) {
-        this.baseOptions.onError(jsonResponse);
-        return;
+        throw jsonResponse;
+      }
+
+      const errorCode = getErrorCode(jsonResponse);
+      if (errorCode) {
+        const translatedMessage = this.i18n.keyExists(`error${errorCode}`, this.baseOptions.locale)
+          ? this.i18n.translate(`error${errorCode}`, this.baseOptions.locale)
+          : this.i18n.translate('errorGenericError', this.baseOptions.locale);
+        showError(fieldIds.code, translatedMessage);
+      } else {
+        hideError(fieldIds.code);
       }
 
       return jsonResponse;
     } catch (err) {
+      showError(fieldIds.code, this.i18n.translate('errorGenericError', this.baseOptions.locale));
       this.baseOptions.onError(err);
     }
   }
@@ -102,6 +120,7 @@ export class FormComponent extends DefaultComponent {
   mount(selector: string): void {
     document.querySelector(selector).insertAdjacentHTML('afterbegin', this._getField());
     addFormFieldsEventListeners(this.giftcardOptions);
+    handleEnter(fieldIds.code, this.balance);
 
     this.giftcardOptions
       ?.onGiftCardReady?.()
@@ -121,6 +140,7 @@ export class FormComponent extends DefaultComponent {
                 ${this.i18n.translate('giftCardPlaceholder', this.baseOptions.locale)} <span aria-hidden="true"> *</span>
               </label>
               <input class="${inputFieldStyles.inputField}" type="text" id="giftcard-code" name="giftCardCode" value="">
+                <span class="${inputFieldStyles.hidden} ${inputFieldStyles.errorField}"></span>
             </div>
           </div>
         </div>

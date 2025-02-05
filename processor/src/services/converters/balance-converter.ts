@@ -34,6 +34,12 @@ export class BalanceConverter {
           code: 404,
           key: GiftCardCodeType.NOT_FOUND,
         });
+      case GiftCardCodeType.ZERO_BALANCE:
+        throw new MockCustomError({
+          message: opts.message || 'Gift card has no balance',
+          code: 400,
+          key: GiftCardCodeType.ZERO_BALANCE,
+        });
       default:
         throw new MockCustomError({
           message: opts.message || 'An error happened during this requests',
