@@ -1,17 +1,17 @@
 import {
   CommercetoolsCartService,
+  CommercetoolsOrderService,
   CommercetoolsPaymentService,
+  ErrorGeneral,
   healthCheckCommercetoolsPermissions,
   statusHandler,
-  CommercetoolsOrderService,
-  ErrorGeneral,
 } from '@commercetools/connect-payments-sdk';
 import {
   CancelPaymentRequest,
   CapturePaymentRequest,
   PaymentProviderModificationResponse,
-  StatusResponse,
   RefundPaymentRequest,
+  StatusResponse,
 } from './types/operation.type';
 import { PaymentModificationStatus } from '../dtos/operations/payment-intents.dto';
 import { RedeemRequestDTO } from '../dtos/mock-giftcards.dto';
@@ -20,10 +20,10 @@ import { appLogger, paymentSDK } from '../payment-sdk';
 import { AbstractGiftCardService } from './abstract-giftcard.service';
 import { MockAPI } from '../clients/mock-giftcard.client';
 import {
+  GiftCardCodeType,
   MockClientBalanceResponse,
   MockClientRedeemRequest,
   MockClientRedeemResponse,
-  GiftCardCodeType,
 } from '../clients/types/mock-giftcard.client.type';
 import { getCartIdFromContext, getPaymentInterfaceFromContext } from '../libs/fastify/context/context';
 import { BalanceResponseSchemaDTO, RedeemResponseDTO } from '../dtos/mock-giftcards.dto';
@@ -234,7 +234,7 @@ export class MockGiftCardService extends AbstractGiftCardService {
     });
     const redemptionId = ctPayment.interfaceId || '';
 
-    const rollbackResult = await MockAPI().rollback(redemptionId);
+    const rollbackResult = await MockAPI().rollback(redemptionId, request.amount);
 
     return {
       outcome:

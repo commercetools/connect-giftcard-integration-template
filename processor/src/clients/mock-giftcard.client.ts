@@ -1,10 +1,11 @@
 import { getConfig } from '../config/config';
+import { AmountSchemaDTO } from '../dtos/operations/payment-intents.dto';
 import {
+  GiftCardCodeType,
   MockClientBalanceResponse,
   MockClientRedeemRequest,
   MockClientRedeemResponse,
   MockClientRollbackResponse,
-  GiftCardCodeType,
   MockClientStatusResponse,
 } from './types/mock-giftcard.client.type';
 
@@ -110,7 +111,7 @@ export class GiftCardClient {
     });
   }
 
-  public async rollback(redemptionReference: string): Promise<MockClientRollbackResponse> {
+  public async rollback(redemptionReference: string, amount: AmountSchemaDTO): Promise<MockClientRollbackResponse> {
     //HINT: Because we will actually be registering a refund transaction in the payment object, this has to be a valid redemption reference.
     // Also note that the redemptionReference used in this method will be fetched from payment.interfaceId, which will be set by the /redeem endpoint
     //TODO: add to comment in PR =>>> We do not need a controlled error scenario here
@@ -124,7 +125,7 @@ export class GiftCardClient {
     return this.promisify({
       result: 'SUCCESS',
       id: `mock-connector-rollback-id-${randomUUID()}`,
-      amount: 1000,
+      amount: amount.centAmount,
     });
   }
 
