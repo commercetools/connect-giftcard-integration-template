@@ -42,6 +42,7 @@ export enum GiftCardCodeType {
   CURRENCY_NOT_MATCH = 'CurrencyNotMatch',
   NOT_FOUND = 'NotFound',
   INVALID = 'Invalid',
+  ZERO_BALANCE = 'ZeroBalance',
 }
 
 /* Mock mechanism to differentiate scenarios of redemption rollback.

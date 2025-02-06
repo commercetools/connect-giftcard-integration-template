@@ -56,6 +56,13 @@ export class GiftCardClient {
           });
         }
 
+        if (amount === '0') {
+          return this.promisify({
+            message: 'The gift card provided has no balance.',
+            code: GiftCardCodeType.ZERO_BALANCE,
+          });
+        }
+
         if (this.currency !== currency) {
           return this.promisify({
             message: 'cart and gift card currency do not match',
@@ -124,7 +131,6 @@ export class GiftCardClient {
     return this.promisify({
       result: 'SUCCESS',
       id: `mock-connector-rollback-id-${randomUUID()}`,
-      amount: 1000,
     });
   }
 

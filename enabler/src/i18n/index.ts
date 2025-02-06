@@ -16,4 +16,9 @@ export default class I18n {
     }
     return this.translations[normalizedLang]?.[key] || this.translations[defaultLanguage]?.[key] || key;
   }
+
+  keyExists(key: string, lang: string | undefined): boolean {
+    const normalizedLang = normalizeLanguageCode(lang || defaultLanguage);
+    return !!this.translations[normalizedLang]?.[key] || !!this.translations[defaultLanguage]?.[key];
+  }
 }

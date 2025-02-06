@@ -112,7 +112,7 @@ export abstract class AbstractGiftCardService {
       id: ctPayment.id,
       transaction: {
         type: transactionType,
-        amount: res.amountRefunded ? res.amountRefunded : requestAmount,
+        amount: requestAmount,
         interactionId: res.pspReference,
         state: this.convertPaymentModificationOutcomeToState(res.outcome),
       },
