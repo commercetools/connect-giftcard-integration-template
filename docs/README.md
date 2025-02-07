@@ -17,27 +17,23 @@ This document provides a comprehensive overview of the system architecture and a
 
 The integration is composed of several interconnected components, each playing a specific role in enabling the seamless use of gift cards as a payment method within commercetools. Below is an overview of these components:
 
-#### commercetools Connect
+1. #### commercetools Connect
 commercetools Connect provides a runtime environment for executing small applications or "connectors" within the commercetools platform. The integration runs within this environment and consists of two key applications:
+   * **Enabler**
+   A JavaScript library that is loaded into the browser during the commercetools Checkout process. The Enabler is responsible for displaying the necessary input fields for gift card information (e.g., card number, PIN) and exposes functions like `balance()` and `submit()` to facilitate interaction between the frontend and backend systems.
+   * **Processor**
+   A backend application that exposes an API to handle requests from both the Enabler (frontend) and commercetools Checkout (backend). The Processor acts as the middle layer that interacts with the gift card provider (e.g., for balance checks, redemptions) and ensures the payment information is updated in the commercetools Core Commerce platform.
 
-**Enabler**
-
-A JavaScript library that is loaded into the browser during the commercetools Checkout process. The Enabler is responsible for displaying the necessary input fields for gift card information (e.g., card number, PIN) and exposes functions like `balance()` and `submit()` to facilitate interaction between the frontend and backend systems.
-
-**Processor**
-
-A backend application that exposes an API to handle requests from both the Enabler (frontend) and commercetools Checkout (backend). The Processor acts as the middle layer that interacts with the gift card provider (e.g., for balance checks, redemptions) and ensures the payment information is updated in the commercetools Core Commerce platform.
-
-#### Gift Card Provider
+1. #### Gift Card Provider
 The external system responsible for managing the gift card details. It holds the gift card information, including balance retrieval, redemption, cancellation, and voiding operations. The Processor communicates with the Gift Card Provider to execute these operations.
 
-#### commercetools Checkout
+1. #### commercetools Checkout
 commercetools Checkout is the system that orchestrates the payment process. It displays available payment methods (e.g., gift cards, credit cards) to the user on the merchant’s website and is responsible for converting a Cart into an Order. The Checkout system uses the integration to handle gift cards as a payment method.
 
-#### commercetools Session
+1. #### commercetools Session
 The commercetools Session API allows the storage and management of session data. The session is critical for maintaining state and trust between the frontend (Enabler) and backend (Processor), ensuring secure interactions during the payment flow.
 
-#### commercetools OAuth
+1. #### commercetools OAuth
 The OAuth server is responsible for issuing and validating client credentials for server-to-server authentication. OAuth is used to authorize requests between the Processor and commercetools Core Commerce.
 
 
