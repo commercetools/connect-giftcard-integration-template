@@ -24,16 +24,16 @@ commercetools Connect provides a runtime environment for executing small applica
    * **Processor**
    A backend application that exposes an API to handle requests from both the Enabler (frontend) and commercetools Checkout (backend). The Processor acts as the middle layer that interacts with the gift card provider (e.g., for balance checks, redemptions) and ensures the payment information is updated in the commercetools Core Commerce platform.
 
-1. #### Gift Card Provider
+2. #### Gift Card Provider
 The external system responsible for managing the gift card details. It holds the gift card information, including balance retrieval, redemption, cancellation, and voiding operations. The Processor communicates with the Gift Card Provider to execute these operations.
 
-1. #### commercetools Checkout
+3. #### commercetools Checkout
 commercetools Checkout is the system that orchestrates the payment process. It displays available payment methods (e.g., gift cards, credit cards) to the user on the merchant’s website and is responsible for converting a Cart into an Order. The Checkout system uses the integration to handle gift cards as a payment method.
 
-1. #### commercetools Session
+4. #### commercetools Session
 The commercetools Session API allows the storage and management of session data. The session is critical for maintaining state and trust between the frontend (Enabler) and backend (Processor), ensuring secure interactions during the payment flow.
 
-1. #### commercetools OAuth
+5. #### commercetools OAuth
 The OAuth server is responsible for issuing and validating client credentials for server-to-server authentication. OAuth is used to authorize requests between the Processor and commercetools Core Commerce.
 
 
@@ -78,12 +78,12 @@ To integrate the gift card system with commercetools Checkout, you will need to 
 
 The integration requires an API client with specific access scopes to manage payments, carts, sessions, and other necessary operations. Ensure the API client is configured with at least the following scopes (other scopes may be required):
 
-* **manage_payments**: Enables the management of payment information, including creating and updating payment methods.
-* **manage_orders**: Allows access and updates to the cart and related order information.
-* **view_sessions**: Grants permission to retrieve session information used for establishing trust between the frontend and backend.
-* **view_api_clients**: Validates if the API credentials provided have the required permissions.
-* **manage_checkout_payment_intents**: Supports interaction with the /operations/* endpoint for managing payment intents during checkout.
-* **introspect_oauth_tokens**: Allows introspection of OAuth tokens to validate permissions and ensure secure authentication.
+* `manage_payments`: Enables the management of payment information, including creating and updating payment methods.
+* `manage_orders`: Allows access and updates to the cart and related order information.
+* `view_sessions`: Grants permission to retrieve session information used for establishing trust between the frontend and backend.
+* `view_api_clients`: Validates if the API credentials provided have the required permissions.
+* `manage_checkout_payment_intents`: Supports interaction with the /operations/* endpoint for managing payment intents during checkout.
+* `introspect_oauth_tokens`: Allows introspection of OAuth tokens to validate permissions and ensure secure authentication.
 
 **API Client for Connector Operations**
 
