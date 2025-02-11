@@ -154,8 +154,92 @@ The provided JavaScript interface defines how the **Giftcard Enabler** is initia
 
 This is the main interface that initializes the gift card enabler and allows the system to create a `GiftCardBuilder`.
 
+```
+createGiftCardBuilder: () => Promise<GiftCardBuilder | never>;
+```
+
 * `createGiftCardBuilder`
   A function that returns a `Promise` which resolves to a `GiftcardBuilder`. If the initialization fails, the promise throws an error (never).
   This method is essential for setting up the enabler, ensuring that the builder for gift cards is available and ready to create components.
+  The `createGiftardBuilder` method acts as the entry point for the enabler, providing access to the builder that can generate the necessary UI components for the gift card input fields.
 
 ---
+
+##### Type: `EnablerOptions`
+
+This type defines the properties that can be passed when initialising the enabler. 
+
+* `processorUrl`: 
+  A string representing the url of the processor the enabler would communicate with.
+* `sessionId`: 
+  Required to authenticate requests to the processor. 
+* `locale`: 
+  An optional string to be used to specify locales, values could vary from “en” to “de”. Defaults to “en”.
+* `onComplete`: 
+  An optional callback function to receive payment success events.
+* `onError`: 
+  An optional. callback function to receive error events.
+
+---
+
+##### Type: `EnablerOptions`
+
+This type defines the options that can be passed to configure the behavior of the gift card payment process when it is built by the GiftCardBuilder.
+
+```
+export type GiftcardOptions = {
+  onGiftCardReady?: () => Promise<void>;
+  onGiftCardSubmit?: () => Promise<void>;
+  onChange?: (isDirty: boolean) => void;
+};
+```
+
+* `onGiftCardReady`:
+  An optional callback function that returns a promise. This is invoked when the gift card component is ready to be displayed or interacted with. It's useful for notifying the system that the gift card UI is fully loaded.
+
+* `onGiftCardSubmit`:
+  Another optional callback function that returns a promise. This is triggered when the user submits the gift card form (e.g., when they attempt to pay using a gift card). This callback allows for custom handling of the submission event.
+
+* `onChange`:
+  Another optional callback function that triggers when a change occurs on the gift card input field. It takes a boolean parameter isDirty to indicate whether the input field value has been modified. This callback function can be used by integrators of this connector to detect when there is a change in the input field.
+
+These options allow developers to hook into the gift card lifecycle events and perform additional logic, like displaying loading indicators or processing custom analytics.
+
+---
+
+##### Interface: `GiftcardBuilder`
+The GiftcardBuilder interface is responsible for constructing a GiftcardComponent that can be integrated into the checkout page.
+
+```
+build(config: GiftcardOptions): GiftcardComponent;
+```
+
+* `build(config: GiftcardOptions)`:
+  This method takes in a GiftcardOptions object (described above) to customize the behavior of the gift card component. It returns a GiftcardComponent that is then used to manage the gift card interaction (like displaying the input fields, retrieving the balance, and submitting the payment).
+  This method builds the actual component that will be displayed to the user and enables interaction with the gift card system.
+
+---
+
+#### Type: `BalanceType`
+
+This type defines the structure for the gift card balance information that is returned when the system checks the card’s balance.
+
+* `status`:
+  Indicates the status of the balance check. 
+  * `state`:
+    * `"Valid"`: The gift card is valid, and the balance is retrievable.
+    * `"NotFound"`: The gift card could not be found.
+    * `"Expired"`: The gift card has expired.
+    * `"CurrencyNotMatch"`: The currency of the gift card does not match the currency of the cart.
+    * `"ZeroBalance"`: A valid gift card with 0 as balance
+    * `"GenericError"`: Any other error that does not fall under previous cases.
+
+  * `errors?[]`:
+    List of errors in case any. 
+    * `code`: Error code
+    * `message`: Error message
+    
+* `amount?`: 
+  Contains the balance information:
+  * `centAmount`: The balance amount in the smallest currency unit (e.g., cents for USD).
+  * `currency`: The currency of the gift card balance (e.g., USD, EUR).
