@@ -215,12 +215,12 @@ build(config: GiftcardOptions): GiftcardComponent;
 ```
 
 * `build(config: GiftcardOptions)`:
-  This method takes in a GiftcardOptions object (described above) to customize the behavior of the gift card component. It returns a GiftcardComponent that is then used to manage the gift card interaction (like displaying the input fields, retrieving the balance, and submitting the payment).
+  This method takes in a `GiftcardOptions` object (described above) to customize the behavior of the gift card component. It returns a `GiftcardComponent` that is then used to manage the gift card interaction (like displaying the input fields, retrieving the balance, and submitting the payment).
   This method builds the actual component that will be displayed to the user and enables interaction with the gift card system.
 
 ---
 
-#### Type: `BalanceType`
+##### Type: `BalanceType`
 
 This type defines the structure for the gift card balance information that is returned when the system checks the card’s balance.
 
@@ -243,3 +243,102 @@ This type defines the structure for the gift card balance information that is re
   Contains the balance information:
   * `centAmount`: The balance amount in the smallest currency unit (e.g., cents for USD).
   * `currency`: The currency of the gift card balance (e.g., USD, EUR).
+
+This type encapsulates the result of a balance check, including whether the gift card is valid and the available amount.
+
+---
+
+##### Interface: `GiftcardComponent`
+
+This is the actual UI component that users interact with during the checkout process.
+
+```
+export interface GiftcardComponent {
+  balance(): Promise<BalanceType>;
+  submit(opts: {amount?: {centAmount: number, currency: number}}): void;
+  mount(selector: string): void;
+}
+```
+
+* `balance()`:
+  This function returns a `Promise` that resolves to a `BalanceType`. It allows the enabler to check the balance of the gift card based on the user’s input. The balance function communicates with the backend (or processor) to retrieve the current balance from the gift card provider.
+
+* `submit(opts: {amount?: {centAmount: number, currency: number}})`:
+  This method triggers the gift card payment process. It does not return a value, but initiates communication between the enabler and the gift card provider to redeem the card's balance for the payment. In case amount is passed, it will redeem at most the amount specified.
+
+* `mount(selector: string)`:
+  This method mounts the gift card UI component into the DOM at the specified `selector` (e.g., a div element in the checkout page). It allows the UI elements for the gift card to be dynamically added to the page when the component is built and ready.
+
+The `GiftcardComponent` is the actual interface between the frontend and the gift card provider. It provides methods to interact with the user input (balance checks, submitting the payment) and mounts the gift card fields on the checkout page.
+
+---
+
+##### Summary
+
+This enabler interface provides the means to:
+
+* Initialize and build the gift card component (`GiftcardEnabler` and `GiftcardBuilder`).
+* Customize the behavior of the component with lifecycle events (`GiftcardOptions`).
+* Mount the component onto the checkout page and manage interactions like balance checks and payments (`GiftcardComponent`).
+* Handle communication with the backend (`processor`) to retrieve balance and process the payment.
+
+This structure ensures that the enabler can be flexibly integrated into commercetools Checkout and provides essential tools to manage gift card transactions efficiently.
+
+
+#### Processor
+
+---
+
+##### Status Check API
+
+The **Status Check API** is designed to validate the configuration and overall health of the connector. This endpoint serves as a diagnostic tool to ensure the connector is properly configured and operational. It is particularly useful in troubleshooting scenarios where the connector might not be functioning as expected due to misconfiguration or other system issues.
+
+This API responds with key metadata about the connector's status, including:
+
+* Configuration correctness
+* Connectivity status with the gift card provider
+* Relevant environment information
+
+By providing real-time validation of the connector setup, the **Status Check API** helps reduce downtime and minimizes support requests related to incorrect configurations during checkout operations.
+
+This endpoint is intended to be invoked before during merchant center configuration to ensure the connector is ready for use.
+
+**Specifications** 
+
+* `required`
+* Endpoint: `GET /operations/status`
+* Auth: `JWT`
+  ```
+  Authorization: Bearer <jwt with issuer>
+  ```
+* Response:
+  ```
+  200 OK
+  {
+     "timestamp":"2024-01-10T15:50:37.464Z",
+     "version":"0.0.1",
+     "metadata":{
+        "name":"giftcard connector",
+        "description":"Description of the connector",
+        // Additional informations can be
+        // * The version of the library used
+        // * The version of the package.json
+     },
+     "status":"OK/Partially Available/Error",
+     "checks":[
+        // List of checks that might be useful to detect any configuration issue
+        {
+           "name":"CoCo Permissions",
+           "status":"UP/DOWN",
+           "details":{}
+        },
+        {
+           "name":"Giftcard provider status check",
+           "status":"UP/DOWN",
+           "details":{
+              "error?": {} //optional and only set if status === "DOWN"
+           }
+        }
+     ]
+  }
+  ```
