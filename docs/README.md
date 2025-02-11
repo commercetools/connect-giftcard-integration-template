@@ -342,3 +342,124 @@ This endpoint is intended to be invoked before during merchant center configurat
      ]
   }
   ```
+
+---
+
+##### Payment Modification API (Checkout)
+
+The **Payment modification API** facilitates communication between commercetools Checkout and the connector for managing payment transactions. It is a secure endpoint protected by the manage_checkout_payment_intents scope and is responsible for handling updates to payment transactions initiated by commercetools Checkout.
+
+Supported Operations:
+
+* **`capturePayment`**:
+  Captures the authorized amount from the gift card and updates the payment transaction status in commercetools Core Commerce. The connector simultaneously updates the status with the gift card provider, ensuring that the funds are deducted from the card.
+* **`refundPayment`**:
+  Processes a refund by returning the specified amount to the gift card, updating both the payment transaction in commercetools Core Commerce and reflecting the refund status with the gift card provider.
+* **`cancelPayment`**:
+  Cancels a pending payment by voiding the transaction, both in commercetools Core Commerce and with the gift card provider. This operation is crucial for scenarios where an order is cancelled before completion.
+
+This API is designed to be invoked by commercetools Checkout to ensure the accurate update of payment information. It allows the connector to synchronize payment statuses between commercetools Core Commerce and the gift card provider, ensuring both systems remain consistent. By supporting capture, refund, and cancellation operations, the API plays a key role in managing the full lifecycle of gift card transactions.
+
+**Specifications** 
+
+* `required`
+* Endpoint: `GET /operations/payment-intents/{paymentsId}`
+* Auth: `oauth2`
+  ```
+  Authorization: Bearer <token with scope manage_checkout_payment_intents:{projectKey}>
+  ```
+* Request:
+  ```
+  {
+    "actions": [{
+      "action": "{capturePayment|refundPayment|cancelPayment}",
+      ...
+    }]
+  }
+  ```
+  * `capturePayment`
+    ```
+    {
+      "action" : "capturePayment",
+      amount: {
+        "centAmount": 10000,
+        "currencyCode": "EUR"
+      }
+    }
+    ```
+  * `refundPayment`
+    ``` 
+    {
+      "action" : "refundPayment",
+      amount: {
+        "centAmount": 10000,
+        "currencyCode": "EUR"
+      }
+    }
+    ```
+  * `cancelPayment`
+    ```
+    {
+      "action" : "cancelPayment"
+    }
+    ```
+* Response:
+  ```
+  200 OK
+  {
+    outcome: 'approved'
+  }
+  ```
+
+---
+
+##### Additional APIs
+
+
+To complete the integration, the connector will implement additional APIs required by the Enabler for frontend interaction. These APIs handle core operations related to gift card balance retrieval and redemption, ensuring smooth user interactions during the checkout process.
+
+An example API needed by the connector might be the `Get balance`
+
+This API allows the Enabler to fetch the current balance of a gift card by interacting with the gift card provider through the Processor. It ensures that commercetools Checkout has accurate information about the available balance on the gift card before processing any payments. This endpoint is a protected endpoint, requiring a session ID represented as `x-session-id` to be passed as header while making a request to it.
+
+
+**Specifications** 
+
+* `optional`
+* Endpoint: `POST /balance`
+* Auth: `x-session-id`
+  ```
+  x-session-id: <session-id>
+  ```
+* Request:
+  ```
+  {
+    "code": "<giftcard-code>"
+  }
+  ```
+* Response:
+  ```
+  200 OK
+  {
+    "status": {
+      "state": "Valid",
+    },
+    "amount": {
+      "centAmount": 10000,
+      "currencyCode": "EUR"
+    }
+  }
+
+  400 Bad Request
+  {
+    "status": {
+      "state": "CurrencyNotMatch",
+      "errors": [
+        {
+          "code": "CurrencyNotMatch",
+          "message": "cart and voucher currency do not match"
+        }
+      ]
+    }
+  }
+  ```
