@@ -419,48 +419,9 @@ This API is designed to be invoked by commercetools Checkout to ensure the accur
 
 To complete the integration, the connector will implement additional APIs required by the Enabler for frontend interaction. These APIs handle core operations related to gift card balance retrieval and redemption, ensuring smooth user interactions during the checkout process.
 
-An example API needed by the connector might be the `Get balance`
+Each connector may need to implement addition APIs to support:
 
-This API allows the Enabler to fetch the current balance of a gift card by interacting with the gift card provider through the Processor. It ensures that commercetools Checkout has accurate information about the available balance on the gift card before processing any payments. This endpoint is a protected endpoint, requiring a session ID represented as `x-session-id` to be passed as header while making a request to it.
+* Get giftcard balance
+* Redeem a giftcard amount
 
-
-**Specifications** 
-
-* `optional`
-* Endpoint: `POST /balance`
-* Auth: `x-session-id`
-  ```
-  x-session-id: <session-id>
-  ```
-* Request:
-  ```
-  {
-    "code": "<giftcard-code>"
-  }
-  ```
-* Response:
-  ```
-  200 OK
-  {
-    "status": {
-      "state": "Valid",
-    },
-    "amount": {
-      "centAmount": 10000,
-      "currencyCode": "EUR"
-    }
-  }
-
-  400 Bad Request
-  {
-    "status": {
-      "state": "CurrencyNotMatch",
-      "errors": [
-        {
-          "code": "CurrencyNotMatch",
-          "message": "cart and voucher currency do not match"
-        }
-      ]
-    }
-  }
-  ```
+There is no API specifications for such additional APIs (beside making sure they are protected by `x-session-id` header) as the design will mostly depend on the Giftcard provider and the enabler implementation.
