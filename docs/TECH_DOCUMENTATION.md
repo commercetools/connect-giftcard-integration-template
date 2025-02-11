@@ -12,6 +12,7 @@ This document provides a comprehensive overview of the system architecture and a
 
 ### System Architecture Diagram
 
+![System architecture diagram](/imgs/system-architecture-diagram.png)
 
 ### Components Overview
 
