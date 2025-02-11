@@ -139,3 +139,8 @@ This command would start 3 required services, necessary for development
 1. JWT Server
 2. Enabler
 3. Processor
+
+## Other resources
+
+* [Developers documentation](/docs/TECH_DOCUMENTATION.md)
+* [Mock values](/docs/MOCKS.md)
