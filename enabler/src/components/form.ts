@@ -46,15 +46,19 @@ export class FormComponent extends DefaultComponent {
   async balance(): Promise<BalanceType> {
     try {
       const giftCardCode = getInput(fieldIds.code).value.replace(/\s/g, '');
+      const requestBody = {
+        code: giftCardCode
+      }
       const fetchBalanceURL = this.baseOptions.processorUrl.endsWith('/')
-        ? `${this.baseOptions.processorUrl}balance/${giftCardCode}`
-        : `${this.baseOptions.processorUrl}/balance/${giftCardCode}`;
+        ? `${this.baseOptions.processorUrl}balance`
+        : `${this.baseOptions.processorUrl}/balance`;
       const response = await fetch(fetchBalanceURL, {
-        method: 'GET',
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'X-Session-Id': this.baseOptions.sessionId,
         },
+        body: JSON.stringify(requestBody)   
       });
 
       const jsonResponse = await response.json();
