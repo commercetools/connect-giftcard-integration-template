@@ -5,6 +5,7 @@ import {
 import { FastifyInstance, FastifyPluginOptions } from 'fastify';
 import { MockGiftCardService } from '../services/mock-giftcard.service';
 import {
+  BalanceRequestSchemaDTO,
   BalanceResponseSchema,
   BalanceResponseSchemaDTO,
   RedeemRequestDTO,
@@ -27,15 +28,15 @@ export const mockGiftCardServiceRoutes = async (
 
   opts: FastifyPluginOptions & RoutesOptions,
 ) => {
-  fastify.get<{
+  fastify.post<{
     Reply: BalanceResponseSchemaDTO | void;
-    Params: { code: string };
+    Body: BalanceRequestSchemaDTO;
   }>(
-    '/balance/:code',
+    '/balance',
     {
       preHandler: [opts.sessionHeaderAuthHook.authenticate()],
       schema: {
-        params: {
+        body: {
           type: 'object',
           properties: {
             code: Type.String(),
@@ -47,7 +48,7 @@ export const mockGiftCardServiceRoutes = async (
       },
     },
     async (request, reply) => {
-      const { code } = request.params;
+      const { code } = request.body;
       const res = await opts.giftCardService.balance(code);
       return reply.status(200).send(res);
     },
