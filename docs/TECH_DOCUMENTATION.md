@@ -183,7 +183,7 @@ This type defines the properties that can be passed when initialising the enable
 
 ---
 
-##### Type: `EnablerOptions`
+##### Type: `GiftCardOptions`
 
 This type defines the options that can be passed to configure the behavior of the gift card payment process when it is built by the GiftCardBuilder.
 
