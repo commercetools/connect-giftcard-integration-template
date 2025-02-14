@@ -1,6 +1,6 @@
 {
   "name": "giftcard-integration-template",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Gift card integration template",
   "main": "dist/server.js",
   "scripts": {
