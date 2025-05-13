@@ -354,5 +354,23 @@ describe('mock-giftcard.service', () => {
       const result = await mockGiftCardService.modifyPayment(modifyPaymentOpts);
       expect(result?.outcome).toStrictEqual('rejected');
     });
+
+    test('revertPayment', async () => {
+      const modifyPaymentOpts: ModifyPayment = {
+        paymentId: 'dummy-paymentId',
+        data: {
+          actions: [
+            {
+              action: 'reversePayment',
+            },
+          ],
+        },
+      };
+      jest.spyOn(DefaultPaymentService.prototype, 'getPayment').mockResolvedValue(getPaymentResultOk);
+      jest.spyOn(DefaultPaymentService.prototype, 'updatePayment').mockResolvedValue(updatePaymentResultOk);
+
+      const result = await mockGiftCardService.modifyPayment(modifyPaymentOpts);
+      expect(result?.outcome).toStrictEqual('approved');
+    });
   });
 });

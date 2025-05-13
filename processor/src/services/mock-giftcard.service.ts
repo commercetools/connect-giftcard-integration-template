@@ -12,6 +12,7 @@ import {
   PaymentProviderModificationResponse,
   StatusResponse,
   RefundPaymentRequest,
+  ReversePaymentRequest,
 } from './types/operation.type';
 import { PaymentModificationStatus } from '../dtos/operations/payment-intents.dto';
 import { RedeemRequestDTO } from '../dtos/mock-giftcards.dto';
@@ -32,6 +33,7 @@ import { BalanceConverter } from './converters/balance-converter';
 import { RedemptionConverter } from './converters/redemption-converter';
 
 import packageJSON from '../../package.json';
+import { log } from '../libs/logger';
 
 /**
  * MockGiftCardService acts as a sample service class to integrate with commercetools composable platform and external gift card service provider. Since no actual communication with external gift card service provider in this connector template, further customization is required if SDK APIs are provided by gift card service provider.
@@ -236,12 +238,68 @@ export class MockGiftCardService extends AbstractGiftCardService {
   }
 
   async refundPayment(request: RefundPaymentRequest): Promise<PaymentProviderModificationResponse> {
-    const ctPayment = await this.ctPaymentService.getPayment({
-      id: request.payment.id,
+    log.info(`Processing payment modification.`, {
+      paymentId: request.payment.id,
+      action: 'refundPayment',
     });
-    const redemptionId = ctPayment.interfaceId || '';
 
-    const rollbackResult = await MockAPI().rollback(redemptionId);
+    const response = await this.handleRefunds({
+      amount: request.amount,
+      merchantReference: request.merchantReference,
+      payment: request.payment,
+    });
+
+    log.info(`Payment modification completed.`, {
+      paymentId: request.payment.id,
+      action: 'refundPayment',
+      result: response.outcome,
+    });
+
+    return response;
+  }
+
+  /**
+   * Reverse payment
+   *
+   * @remarks
+   * Abstract method to execute payment reversals in support of automated reversals to be triggered by checkout api. The actual invocation to PSPs should be implemented in subclasses
+   *
+   * @param request
+   * @returns Promise with outcome containing operation status and PSP reference
+   */
+  async reversePayment(request: ReversePaymentRequest): Promise<PaymentProviderModificationResponse> {
+    log.info(`Processing payment modification.`, {
+      paymentId: request.payment.id,
+      action: 'reversePayment',
+    });
+
+    const response = await this.handleRefunds({
+      amount: request.payment.amountPlanned,
+      merchantReference: request.merchantReference,
+      payment: request.payment,
+    });
+
+    log.info(`Payment modification completed.`, {
+      paymentId: request.payment.id,
+      action: 'reversePayment',
+      result: response.outcome,
+    });
+
+    return response;
+  }
+
+  private async handleRefunds(request: RefundPaymentRequest): Promise<PaymentProviderModificationResponse> {
+    const rollbackResult = await MockAPI().rollback(request.payment.interfaceId || '');
+
+    await this.ctPaymentService.updatePayment({
+      id: request.payment.id,
+      transaction: {
+        type: 'Refund',
+        amount: request.amount,
+        interactionId: request.payment.interfaceId,
+        state: rollbackResult.result ? 'Success' : 'Failure',
+      },
+    });
 
     return {
       outcome:
