@@ -289,6 +289,15 @@ export class MockGiftCardService extends AbstractGiftCardService {
   }
 
   private async handleRefunds(request: RefundPaymentRequest): Promise<PaymentProviderModificationResponse> {
+    await this.ctPaymentService.updatePayment({
+      id: request.payment.id,
+      transaction: {
+        type: 'Refund',
+        amount: request.amount,
+        state: 'Initial',
+      },
+    });
+
     const rollbackResult = await MockAPI().rollback(request.payment.interfaceId || '');
 
     await this.ctPaymentService.updatePayment({
@@ -296,7 +305,7 @@ export class MockGiftCardService extends AbstractGiftCardService {
       transaction: {
         type: 'Refund',
         amount: request.amount,
-        interactionId: request.payment.interfaceId,
+        interactionId: rollbackResult.id,
         state: rollbackResult.result ? 'Success' : 'Failure',
       },
     });
