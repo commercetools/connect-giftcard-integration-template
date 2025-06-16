@@ -143,9 +143,22 @@ export class FormComponent extends DefaultComponent {
               <label class="${inputFieldStyles.inputLabel}" for="giftcard-code">
                 ${this.i18n.translate('giftCardPlaceholder', this.baseOptions.locale)} <span aria-hidden="true"> *</span>
               </label>
-              <input class="${inputFieldStyles.inputField}" type="text" id="giftcard-code" name="giftCardCode" value="">
-                <span class="${inputFieldStyles.hidden} ${inputFieldStyles.errorField}"></span>
-            </div>
+              <input 
+                class="${inputFieldStyles.inputField}" 
+                type="text" 
+                id="giftcard-code" 
+                name="giftCardCode" 
+                value=""
+                aria-describedby="giftcard-code-error"
+                aria-invalid="false"
+              >
+              <div 
+                id="giftcard-code-error" 
+                class="${inputFieldStyles.errorField}" 
+                role="alert"
+                aria-live="polite"
+                aria-hidden="true"
+              ></div>
           </div>
         </div>
       `;
