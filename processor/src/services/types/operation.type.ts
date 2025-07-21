@@ -21,6 +21,7 @@ export type RefundPaymentRequest = {
   amount: AmountSchemaDTO;
   payment: Payment;
   merchantReference?: string;
+  transactionId?: string;
 };
 
 export type ReversePaymentRequest = {
