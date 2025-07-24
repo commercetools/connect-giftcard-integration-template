@@ -14,13 +14,13 @@
   },
   "devDependencies": {
     "@types/node": "22.15.29",
-    "jest": "30.0.4",
+    "jest": "30.0.5",
     "sass": "1.89.2",
     "prettier": "^3.6.2",
     "ts-jest": "29.4.0",
     "ts-node": "^10.9.2",
     "typescript": "5.8.3",
-    "vite": "7.0.4",
+    "vite": "7.0.5",
     "vite-plugin-css-injected-by-js": "3.5.2"
   },
   "dependencies": {
