@@ -103,6 +103,7 @@ export abstract class AbstractGiftCardService {
           amount: request.amount,
           payment: ctPayment,
           merchantReference: request.merchantReference,
+          transactionId: request.transactionId,
         });
       }
       case 'reversePayment': {
