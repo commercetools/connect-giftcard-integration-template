@@ -33,6 +33,9 @@
     "fastify-plugin": "5.1.0",
     "qs": "6.15.1"
   },
+  "overrides": {
+    "lodash": "^4.18.1"
+  },
   "devDependencies": {
     "@jest/globals": "30.4.1",
     "@types/jest": "30.0.0",
