@@ -18,7 +18,7 @@
     "connector:pre-undeploy": "node src/connectors/pre-undeploy.ts"
   },
   "dependencies": {
-    "@commercetools-backend/loggers": "27.5.4",
+    "@commercetools-backend/loggers": "27.6.0",
     "@commercetools/connect-payments-sdk": "0.28.0",
     "@fastify/autoload": "6.3.1",
     "@fastify/cors": "11.2.0",
