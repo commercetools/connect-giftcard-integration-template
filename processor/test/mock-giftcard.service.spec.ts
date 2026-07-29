@@ -109,7 +109,7 @@ describe('mock-giftcard.service', () => {
 
     // Assert
     await expect(result).rejects.toThrow(MockCustomError);
-    await expect(result).rejects.toThrowError('cart and gift card currency do not match');
+    await expect(result).rejects.toThrow('cart and gift card currency do not match');
   });
 
   test('When checking balance by inputting an expired gift card, it should throw error with Expired code', async () => {
@@ -120,7 +120,7 @@ describe('mock-giftcard.service', () => {
 
     // Assert
     await expect(result).rejects.toThrow(MockCustomError);
-    await expect(result).rejects.toThrowError('The gift card is expired.');
+    await expect(result).rejects.toThrow('The gift card is expired.');
   });
 
   test('When checking balance by inputting an erroneous gift card, it should throw error with GenericError code', async () => {
@@ -131,7 +131,7 @@ describe('mock-giftcard.service', () => {
 
     // Assert
     await expect(result).rejects.toThrow(MockCustomError);
-    await expect(result).rejects.toThrowError('Generic error occurs.');
+    await expect(result).rejects.toThrow('Generic error occurs.');
   });
 
   test('When checking balance by inputting a not supported error gift code, it should throw error with Invalid code', async () => {
@@ -142,7 +142,7 @@ describe('mock-giftcard.service', () => {
 
     // Assert
     await expect(result).rejects.toThrow(MockCustomError);
-    await expect(result).rejects.toThrowError('The code provided is invalid');
+    await expect(result).rejects.toThrow('The code provided is invalid');
   });
 
   test('When checking balance by inputting a not existing error gift code, it should throw error with NotFound code', async () => {
@@ -153,7 +153,7 @@ describe('mock-giftcard.service', () => {
 
     // Assert
     await expect(result).rejects.toThrow(MockCustomError);
-    await expect(result).rejects.toThrowError('The gift card code is not found.');
+    await expect(result).rejects.toThrow('The gift card code is not found.');
   });
 
   test('When redeeming a valid gift card, it should return Success as result', async () => {
@@ -282,7 +282,7 @@ describe('mock-giftcard.service', () => {
       jest.spyOn(DefaultPaymentService.prototype, 'updatePayment').mockResolvedValue(updatePaymentResultOk);
 
       const result = mockGiftCardService.modifyPayment(modifyPaymentOpts);
-      expect(result).rejects.toThrowError('operation not supported');
+      await expect(result).rejects.toThrow('operation not supported');
     });
 
     test('cancelPayment', async () => {
@@ -302,7 +302,7 @@ describe('mock-giftcard.service', () => {
       jest.spyOn(DefaultPaymentService.prototype, 'updatePayment').mockResolvedValue(updatePaymentResultOk);
 
       const result = mockGiftCardService.modifyPayment(modifyPaymentOpts);
-      expect(result).rejects.toThrowError('operation not supported');
+      await expect(result).rejects.toThrow('operation not supported');
     });
 
     test('refundPayment', async () => {
