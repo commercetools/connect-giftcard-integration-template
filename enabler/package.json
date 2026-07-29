@@ -2,6 +2,10 @@
   "name": "enabler",
   "version": "0.3.0",
   "type": "module",
+  "engines": {
+    "node": ">=24.0.0",
+    "npm": ">=11.0.0"
+  },
   "scripts": {
     "dev": "vite --port 3000",
     "start": "serve public -l 8080 --cors",
@@ -13,7 +17,7 @@
     "serve": "npm run build && serve public -l 3000 --cors"
   },
   "devDependencies": {
-    "@types/node": "25.7.0",
+    "@types/node": "24.13.3",
     "jest": "30.4.2",
     "sass": "1.102.0",
     "prettier": "^3.9.6",
