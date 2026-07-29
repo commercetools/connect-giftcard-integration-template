@@ -6,8 +6,8 @@
   "scripts": {
     "start": "node dist/main.js",
     "start:dev": "node_modules/.bin/nodemon -q dist/main.js",
-    "lint": "prettier --check \"**/**/*.{ts,js,json}\" && eslint",
-    "lint:fix": "prettier --write \"**/**/*.{ts,js,json}\" && eslint --fix",
+    "lint": "prettier --check \"**/**/*.{ts,js,json}\" && eslint src test",
+    "lint:fix": "prettier --write \"**/**/*.{ts,js,json}\" && eslint --fix src test",
     "build": "rm -rf /dist && tsc",
     "dev": "ts-node src/main.ts",
     "watch": "nodemon --watch \"src/**\" --ext \"ts,json,html\" --ignore \"src/**/*.spec.ts\" --exec \"ts-node src/main.ts\"",
@@ -41,6 +41,8 @@
     "brace-expansion@5": "5.0.8"
   },
   "devDependencies": {
+    "@eslint/eslintrc": "3.3.6",
+    "@eslint/js": "10.0.1",
     "@jest/globals": "30.4.1",
     "@types/jest": "30.0.0",
     "@types/node": "25.8.0",

@@ -204,7 +204,7 @@ describe('mock-giftcard.service', () => {
       if (error instanceof MockCustomError) {
         expect(error.message).toBe('cart and gift card currency do not match');
       } else {
-        throw new Error('Unexpected error type');
+        throw new Error('Unexpected error type', { cause: error });
       }
     }
   });
@@ -255,7 +255,7 @@ describe('mock-giftcard.service', () => {
       if (error instanceof MockCustomError) {
         expect(error.message).toBe('The gift card is expired.');
       } else {
-        throw new Error('Unexpected error type');
+        throw new Error('Unexpected error type', { cause: error });
       }
     }
   });
