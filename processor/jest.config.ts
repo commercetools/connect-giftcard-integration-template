@@ -21,6 +21,9 @@ module.exports = {
           module: 'CommonJS',
           moduleResolution: 'Node',
           isolatedModules: true,
+          // TS 6.x flags `moduleResolution: node10` as deprecated; we only need
+          // it here to transpile ESM deps to CommonJS, so silence the notice.
+          ignoreDeprecations: '6.0',
         },
       },
     ],
