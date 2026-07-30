@@ -47,8 +47,8 @@ export class FormComponent extends DefaultComponent {
     try {
       const giftCardCode = getInput(fieldIds.code).value.replace(/\s/g, '');
       const requestBody = {
-        code: giftCardCode
-      }
+        code: giftCardCode,
+      };
       const fetchBalanceURL = this.baseOptions.processorUrl.endsWith('/')
         ? `${this.baseOptions.processorUrl}balance`
         : `${this.baseOptions.processorUrl}/balance`;
@@ -58,7 +58,7 @@ export class FormComponent extends DefaultComponent {
           'Content-Type': 'application/json',
           'X-Session-Id': this.baseOptions.sessionId,
         },
-        body: JSON.stringify(requestBody)   
+        body: JSON.stringify(requestBody),
       });
 
       const jsonResponse = await response.json();
