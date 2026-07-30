@@ -80,6 +80,9 @@ export class FormComponent extends DefaultComponent {
     } catch (err) {
       showError(fieldIds.code, this.i18n.translate('errorGenericError', this.baseOptions.locale));
       this.baseOptions.onError(err);
+      // Callers expect a balance, so surface the failure rather than resolving
+      // with undefined. The default onError already throws.
+      throw err;
     }
   }
 
@@ -122,7 +125,11 @@ export class FormComponent extends DefaultComponent {
   }
 
   mount(selector: string): void {
-    document.querySelector(selector).insertAdjacentHTML('afterbegin', this._getField());
+    const container = document.querySelector(selector);
+    if (!container) {
+      throw new Error(`Could not find an element matching selector: ${selector}`);
+    }
+    container.insertAdjacentHTML('afterbegin', this._getField());
     addFormFieldsEventListeners(this.giftcardOptions);
     handleEnter(fieldIds.code, this.balance);
 

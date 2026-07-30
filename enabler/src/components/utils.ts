@@ -4,17 +4,17 @@ import inputFieldStyles from '../style/inputField.module.scss';
 export const getInput = (field: string) => document.querySelector(`#${field}`) as HTMLInputElement;
 
 export const showError = (field: string, textContent: string) => {
-  const input = getInput(field);
-  input.parentElement.classList.add(inputFieldStyles.error);
-  const errorElement = input.parentElement.querySelector(`#${field} + .${inputFieldStyles.errorField}`);
+  const parent = getInput(field).parentElement!;
+  parent.classList.add(inputFieldStyles.error);
+  const errorElement = parent.querySelector(`#${field} + .${inputFieldStyles.errorField}`)!;
   errorElement.textContent = textContent;
   errorElement.classList.remove(inputFieldStyles.hidden);
 };
 
 export const hideError = (field: string) => {
-  const input = getInput(field);
-  input.parentElement.classList.remove(inputFieldStyles.error);
-  const errorElement = input.parentElement.querySelector(`#${field} + .${inputFieldStyles.errorField}`);
+  const parent = getInput(field).parentElement!;
+  parent.classList.remove(inputFieldStyles.error);
+  const errorElement = parent.querySelector(`#${field} + .${inputFieldStyles.errorField}`)!;
   errorElement.textContent = '';
   errorElement.classList.add(inputFieldStyles.hidden);
 };
@@ -32,9 +32,10 @@ const handleChangeEvent = (field: string, onValueChange?: (hasValue: boolean) =>
   }
 
   input.addEventListener('focusout', () => {
+    const parent = input.parentElement!;
     input.value.length > 0
-      ? input.parentElement.classList.add(inputFieldStyles.containValue)
-      : input.parentElement.classList.remove(inputFieldStyles.containValue);
+      ? parent.classList.add(inputFieldStyles.containValue)
+      : parent.classList.remove(inputFieldStyles.containValue);
   });
 };
 
@@ -61,10 +62,10 @@ type Res = {
 export const getErrorCode = (res: Res): string | null =>
   res.status.state !== 'Valid' ? res.status.errors?.[0].code || 'GenericError' : null;
 
-export const handleEnter = (field: string, callback: (e: Event) => void) => {
+export const handleEnter = (field: string, callback?: (e: Event) => void) => {
   getInput(field).addEventListener('keydown', (e) => {
     if (e.key === 'Enter' || e.keyCode === 13) {
-      callback(e);
+      callback?.(e);
     }
   });
 };

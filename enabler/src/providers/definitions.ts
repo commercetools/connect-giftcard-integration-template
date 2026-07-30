@@ -23,8 +23,10 @@ export type BaseOptions = {
   sessionId: string;
   processorUrl: string;
   locale?: string;
-  onComplete?: (result: PaymentResult) => void;
-  onError?: (error: any) => void;
+  // The enabler always falls back to its own default handlers, so components
+  // can rely on these being present.
+  onComplete: (result: PaymentResult) => void;
+  onError: (error: any) => void;
 };
 
 export type BalanceType = {
