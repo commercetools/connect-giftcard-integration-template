@@ -13,7 +13,7 @@
     "serve": "npm run build && serve public -l 3000 --cors"
   },
   "devDependencies": {
-    "@types/node": "25.7.0",
+    "@types/node": "26.1.2",
     "jest": "30.4.2",
     "sass": "1.102.0",
     "prettier": "^3.9.6",
