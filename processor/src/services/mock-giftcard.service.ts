@@ -75,7 +75,6 @@ export class MockGiftCardService extends AbstractGiftCardService {
             'view_api_clients',
             'manage_orders',
             'introspect_oauth_tokens',
-            'manage_checkout_payment_intents',
           ],
           ctAuthorizationService: paymentSDK.ctAuthorizationService,
           projectKey: getConfig().projectKey,

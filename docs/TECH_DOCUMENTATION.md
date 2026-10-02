@@ -83,7 +83,6 @@ The integration requires an API client with specific access scopes to manage pay
 * `manage_orders`: Allows access and updates to the cart and related order information.
 * `view_sessions`: Grants permission to retrieve session information used for establishing trust between the frontend and backend.
 * `view_api_clients`: Validates if the API credentials provided have the required permissions.
-* `manage_checkout_payment_intents`: Supports interaction with the `/operations/*` endpoint for managing payment intents during checkout.
 * `introspect_oauth_tokens`: Allows introspection of OAuth tokens to validate permissions and ensure secure authentication.
 
 **API Client for Connector Operations**

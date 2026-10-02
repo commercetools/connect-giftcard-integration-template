@@ -55,7 +55,6 @@ Setup correct environment variables: check `processor/src/config/config.ts` for 
 Make sure commercetools client credential have at least the following permissions:
 
 * `manage_payments`
-* `manage_checkout_payment_intents`
 * `view_sessions`
 * `introspect_oauth_tokens`
 

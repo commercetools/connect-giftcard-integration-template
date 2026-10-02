@@ -1,4 +1,4 @@
-import { describe, test, expect, afterEach, jest, beforeEach, beforeAll } from '@jest/globals';
+import { describe, test, expect, afterEach, vi, beforeEach, beforeAll } from 'vitest';
 import { setupServer } from 'msw/node';
 import { paymentSDK } from '../src/payment-sdk';
 import { MockGiftCardService, MockGiftCardServiceOptions } from '../src/services/mock-giftcard.service';
@@ -18,8 +18,13 @@ import {
 } from './mocks/coco';
 
 import { HealthCheckResult } from '@commercetools/connect-payments-sdk';
-import crypto from 'crypto';
+import { randomUUID } from 'crypto';
 import { AbstractGiftCardService } from '../src/services/abstract-giftcard.service';
+
+vi.mock('crypto', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('crypto')>();
+  return { ...actual, randomUUID: vi.fn(actual.randomUUID) };
+});
 
 interface FlexibleConfig {
   [key: string]: string | number | undefined; // Adjust the type according to your config values
@@ -32,8 +37,8 @@ function setupMockConfig(keysAndValues: Record<string, string>) {
   });
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  jest.spyOn(Config, 'getConfig').mockReturnValue(mockConfig as any);
-  jest.spyOn(DefaultCartService.prototype, 'getCart').mockResolvedValue(getCartOK());
+  vi.spyOn(Config, 'getConfig').mockReturnValue(mockConfig as any);
+  vi.spyOn(DefaultCartService.prototype, 'getCart').mockResolvedValue(getCartOK());
 }
 
 describe('mock-giftcard.service', () => {
@@ -48,13 +53,13 @@ describe('mock-giftcard.service', () => {
 
   beforeAll(() => {
     mockServer.listen({
-      onUnhandledRequest: 'bypass',
+      onUnhandledFrame: 'bypass',
     });
   });
 
   beforeEach(() => {
-    jest.setTimeout(10000);
-    jest.resetAllMocks();
+    vi.setConfig({ testTimeout: 10000 });
+    vi.resetAllMocks();
   });
 
   afterEach(() => {
@@ -62,7 +67,7 @@ describe('mock-giftcard.service', () => {
   });
 
   afterEach(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
   });
 
   test('getStatus', async () => {
@@ -76,7 +81,7 @@ describe('mock-giftcard.service', () => {
       return result;
     };
 
-    jest.spyOn(StatusHandler, 'healthCheckCommercetoolsPermissions').mockReturnValue(mockHealthCheckFunction);
+    vi.spyOn(StatusHandler, 'healthCheckCommercetoolsPermissions').mockReturnValue(mockHealthCheckFunction);
     const result: StatusResponse = await mockGiftCardService.status();
 
     expect(result?.status).toBeDefined();
@@ -159,10 +164,10 @@ describe('mock-giftcard.service', () => {
   test('When redeeming a valid gift card, it should return Success as result', async () => {
     setupMockConfig({ mockConnectorCurrency: 'USD' });
     const dummyUUID = 'It-is-a-dummy-uuid';
-    jest.spyOn(DefaultPaymentService.prototype, 'createPayment').mockResolvedValue(createPaymentResultOk);
-    jest.spyOn(DefaultCartService.prototype, 'addPayment').mockResolvedValue(getCartOK());
-    jest.spyOn(DefaultPaymentService.prototype, 'updatePayment').mockResolvedValue(updatePaymentResultOk);
-    jest.spyOn(crypto, 'randomUUID').mockReturnValue(dummyUUID);
+    vi.spyOn(DefaultPaymentService.prototype, 'createPayment').mockResolvedValue(createPaymentResultOk);
+    vi.spyOn(DefaultCartService.prototype, 'addPayment').mockResolvedValue(getCartOK());
+    vi.spyOn(DefaultPaymentService.prototype, 'updatePayment').mockResolvedValue(updatePaymentResultOk);
+    vi.mocked(randomUUID).mockReturnValue(dummyUUID);
 
     // Act
     const result = await mockGiftCardService.redeem({
@@ -184,10 +189,10 @@ describe('mock-giftcard.service', () => {
   test('when redeeming gift card with wrong currency, it should throw error with code CuurencyNotMatch', async () => {
     setupMockConfig({ mockConnectorCurrency: 'EUR' });
     const dummyUUID = 'It-is-a-dummy-uuid';
-    jest.spyOn(DefaultPaymentService.prototype, 'createPayment').mockResolvedValue(createPaymentResultOk);
-    jest.spyOn(DefaultCartService.prototype, 'addPayment').mockResolvedValue(getCartOK());
-    jest.spyOn(DefaultPaymentService.prototype, 'updatePayment').mockResolvedValue(updatePaymentResultOk);
-    jest.spyOn(crypto, 'randomUUID').mockReturnValue(dummyUUID);
+    vi.spyOn(DefaultPaymentService.prototype, 'createPayment').mockResolvedValue(createPaymentResultOk);
+    vi.spyOn(DefaultCartService.prototype, 'addPayment').mockResolvedValue(getCartOK());
+    vi.spyOn(DefaultPaymentService.prototype, 'updatePayment').mockResolvedValue(updatePaymentResultOk);
+    vi.mocked(randomUUID).mockReturnValue(dummyUUID);
 
     try {
       await mockGiftCardService.redeem({
@@ -212,10 +217,10 @@ describe('mock-giftcard.service', () => {
   test('when redeem giftcard with correct currency but failed the redemption, it should return Failure as result', async () => {
     setupMockConfig({ mockConnectorCurrency: 'USD' });
     const dummyUUID = 'It-is-a-dummy-uuid';
-    jest.spyOn(DefaultPaymentService.prototype, 'createPayment').mockResolvedValue(createPaymentResultOk);
-    jest.spyOn(DefaultCartService.prototype, 'addPayment').mockResolvedValue(getCartOK());
-    jest.spyOn(DefaultPaymentService.prototype, 'updatePayment').mockResolvedValue(updatePaymentResultOk);
-    jest.spyOn(crypto, 'randomUUID').mockReturnValue(dummyUUID);
+    vi.spyOn(DefaultPaymentService.prototype, 'createPayment').mockResolvedValue(createPaymentResultOk);
+    vi.spyOn(DefaultCartService.prototype, 'addPayment').mockResolvedValue(getCartOK());
+    vi.spyOn(DefaultPaymentService.prototype, 'updatePayment').mockResolvedValue(updatePaymentResultOk);
+    vi.mocked(randomUUID).mockReturnValue(dummyUUID);
 
     const result = await mockGiftCardService.redeem({
       data: {
@@ -235,10 +240,10 @@ describe('mock-giftcard.service', () => {
   test('it should throw a MockCustomError with Valid-00 to test a giftcard that passes balance but fails to redeem', async () => {
     setupMockConfig({ mockConnectorCurrency: 'USD' });
     const dummyUUID = 'It-is-a-dummy-uuid';
-    jest.spyOn(DefaultPaymentService.prototype, 'createPayment').mockResolvedValue(createPaymentResultOk);
-    jest.spyOn(DefaultCartService.prototype, 'addPayment').mockResolvedValue(getCartOK());
-    jest.spyOn(DefaultPaymentService.prototype, 'updatePayment').mockResolvedValue(updatePaymentResultOk);
-    jest.spyOn(crypto, 'randomUUID').mockReturnValue(dummyUUID);
+    vi.spyOn(DefaultPaymentService.prototype, 'createPayment').mockResolvedValue(createPaymentResultOk);
+    vi.spyOn(DefaultCartService.prototype, 'addPayment').mockResolvedValue(getCartOK());
+    vi.spyOn(DefaultPaymentService.prototype, 'updatePayment').mockResolvedValue(updatePaymentResultOk);
+    vi.mocked(randomUUID).mockReturnValue(dummyUUID);
 
     try {
       await mockGiftCardService.redeem({
@@ -278,8 +283,8 @@ describe('mock-giftcard.service', () => {
         },
       };
 
-      jest.spyOn(DefaultPaymentService.prototype, 'getPayment').mockResolvedValue(getPaymentResultOk);
-      jest.spyOn(DefaultPaymentService.prototype, 'updatePayment').mockResolvedValue(updatePaymentResultOk);
+      vi.spyOn(DefaultPaymentService.prototype, 'getPayment').mockResolvedValue(getPaymentResultOk);
+      vi.spyOn(DefaultPaymentService.prototype, 'updatePayment').mockResolvedValue(updatePaymentResultOk);
 
       const result = mockGiftCardService.modifyPayment(modifyPaymentOpts);
       await expect(result).rejects.toThrow('operation not supported');
@@ -298,8 +303,8 @@ describe('mock-giftcard.service', () => {
         },
       };
 
-      jest.spyOn(DefaultPaymentService.prototype, 'getPayment').mockResolvedValue(getPaymentResultOk);
-      jest.spyOn(DefaultPaymentService.prototype, 'updatePayment').mockResolvedValue(updatePaymentResultOk);
+      vi.spyOn(DefaultPaymentService.prototype, 'getPayment').mockResolvedValue(getPaymentResultOk);
+      vi.spyOn(DefaultPaymentService.prototype, 'updatePayment').mockResolvedValue(updatePaymentResultOk);
 
       const result = mockGiftCardService.modifyPayment(modifyPaymentOpts);
       await expect(result).rejects.toThrow('operation not supported');
@@ -322,8 +327,8 @@ describe('mock-giftcard.service', () => {
         },
       };
 
-      jest.spyOn(DefaultPaymentService.prototype, 'getPayment').mockResolvedValue(getPaymentResultOk);
-      jest.spyOn(DefaultPaymentService.prototype, 'updatePayment').mockResolvedValue(updatePaymentResultOk);
+      vi.spyOn(DefaultPaymentService.prototype, 'getPayment').mockResolvedValue(getPaymentResultOk);
+      vi.spyOn(DefaultPaymentService.prototype, 'updatePayment').mockResolvedValue(updatePaymentResultOk);
 
       const result = await mockGiftCardService.modifyPayment(modifyPaymentOpts);
       expect(result?.outcome).toStrictEqual('approved');
@@ -346,10 +351,8 @@ describe('mock-giftcard.service', () => {
         },
       };
 
-      jest
-        .spyOn(DefaultPaymentService.prototype, 'getPayment')
-        .mockResolvedValue(getPaymentResultOkWithInvalidInterface);
-      jest.spyOn(DefaultPaymentService.prototype, 'updatePayment').mockResolvedValue(updatePaymentResultOk);
+      vi.spyOn(DefaultPaymentService.prototype, 'getPayment').mockResolvedValue(getPaymentResultOkWithInvalidInterface);
+      vi.spyOn(DefaultPaymentService.prototype, 'updatePayment').mockResolvedValue(updatePaymentResultOk);
 
       const result = await mockGiftCardService.modifyPayment(modifyPaymentOpts);
       expect(result?.outcome).toStrictEqual('rejected');
@@ -366,8 +369,8 @@ describe('mock-giftcard.service', () => {
           ],
         },
       };
-      jest.spyOn(DefaultPaymentService.prototype, 'getPayment').mockResolvedValue(getPaymentResultOk);
-      jest.spyOn(DefaultPaymentService.prototype, 'updatePayment').mockResolvedValue(updatePaymentResultOk);
+      vi.spyOn(DefaultPaymentService.prototype, 'getPayment').mockResolvedValue(getPaymentResultOk);
+      vi.spyOn(DefaultPaymentService.prototype, 'updatePayment').mockResolvedValue(updatePaymentResultOk);
 
       const result = await mockGiftCardService.modifyPayment(modifyPaymentOpts);
       expect(result?.outcome).toStrictEqual('approved');
