@@ -26,7 +26,7 @@ import {
   MockClientRedeemResponse,
   GiftCardCodeType,
 } from '../clients/types/mock-giftcard.client.type';
-import { getCartIdFromContext, getPaymentInterfaceFromContext } from '../libs/fastify/context/context';
+import { getCartIdFromContext, getCheckoutTransactionItemIdFromContext } from '../libs/fastify/context/context';
 import { BalanceResponseSchemaDTO, RedeemResponseDTO } from '../dtos/mock-giftcards.dto';
 import { MockCustomError } from '../errors/mock-api.error';
 import { BalanceConverter } from './converters/balance-converter';
@@ -75,7 +75,6 @@ export class MockGiftCardService extends AbstractGiftCardService {
             'view_api_clients',
             'manage_orders',
             'introspect_oauth_tokens',
-            'manage_checkout_payment_intents',
           ],
           ctAuthorizationService: paymentSDK.ctAuthorizationService,
           projectKey: getConfig().projectKey,
@@ -158,9 +157,10 @@ export class MockGiftCardService extends AbstractGiftCardService {
     const ctPayment = await this.ctPaymentService.createPayment({
       amountPlanned: redeemAmount,
       paymentMethodInfo: {
-        paymentInterface: getPaymentInterfaceFromContext() || 'mock-giftcard-provider',
+        paymentInterface: 'mock-giftcard-provider',
         method: 'giftcard',
       },
+      checkoutTransactionItemId: getCheckoutTransactionItemIdFromContext(),
       ...(ctCart.customerId && {
         customer: {
           typeId: 'customer',
