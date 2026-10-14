@@ -18,12 +18,12 @@
     "serve": "npm run build && serve public -l 3000 --cors"
   },
   "devDependencies": {
-    "@types/node": "24.19.1",
+    "@types/node": "24.19.2",
     "sass": "1.105.1",
-    "prettier": "^3.9.9",
+    "prettier": "^3.9.10",
     "ts-node": "^10.9.2",
     "typescript": "6.0.3",
-    "vite": "8.3.2",
+    "vite": "8.3.4",
     "vite-plugin-css-injected-by-js": "5.0.2",
     "vitest": "5.0.3"
   },
