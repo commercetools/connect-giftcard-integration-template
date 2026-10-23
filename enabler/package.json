@@ -3,7 +3,7 @@
   "version": "0.6.0",
   "type": "module",
   "engines": {
-    "node": ">=24.0.0",
+    "node": "^24.22.1",
     "npm": ">=11.0.0"
   },
   "scripts": {
@@ -18,14 +18,14 @@
     "serve": "npm run build && serve public -l 3000 --cors"
   },
   "devDependencies": {
-    "@types/node": "24.19.1",
-    "sass": "1.105.1",
-    "prettier": "^3.9.9",
-    "ts-node": "^10.9.2",
-    "typescript": "6.0.3",
-    "vite": "8.3.2",
+    "@types/node": "24.19.2",
+    "prettier": "3.9.10",
+    "sass": "1.106.1",
+    "ts-node": "10.9.2",
+    "typescript": "7.0.2",
+    "vite": "8.3.5",
     "vite-plugin-css-injected-by-js": "5.0.2",
-    "vitest": "5.0.3"
+    "vitest": "5.0.5"
   },
   "dependencies": {
     "serve": "14.2.6"
@@ -37,6 +37,7 @@
     "brace-expansion@5": "5.0.12",
     "js-yaml@3": "3.15.2",
     "js-yaml@4": "4.3.2",
-    "fast-uri@3": "3.1.8"
+    "fast-uri@3": "3.1.8",
+    "compression": "1.8.2"
   }
 }
