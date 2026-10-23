@@ -18,7 +18,7 @@
     "connector:pre-undeploy": "node src/connectors/pre-undeploy.ts"
   },
   "engines": {
-    "node": ">=24.0.0",
+    "node": "^24.22.1",
     "npm": ">=11.0.0"
   },
   "dependencies": {
