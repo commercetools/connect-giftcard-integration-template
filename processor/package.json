@@ -38,7 +38,7 @@
     "qs": "6.16.1"
   },
   "overrides": {
-    "lodash": "^4.18.1",
+    "lodash": "4.18.1",
     "brace-expansion@1": "1.1.21",
     "brace-expansion@2": "2.1.7",
     "brace-expansion@3": "3.0.9",
@@ -55,7 +55,7 @@
   "devDependencies": {
     "@eslint/eslintrc": "3.3.7",
     "@eslint/js": "10.0.1",
-    "@types/node": "^24.19.2",
+    "@types/node": "24.19.2",
     "@typescript-eslint/eslint-plugin": "8.72.0",
     "@typescript-eslint/parser": "8.72.0",
     "eslint": "10.13.0",
