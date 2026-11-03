@@ -20,7 +20,7 @@
   "devDependencies": {
     "@types/node": "24.19.2",
     "prettier": "3.9.10",
-    "sass": "1.106.1",
+    "sass": "1.107.1",
     "ts-node": "10.9.2",
     "typescript": "7.0.2",
     "vite": "8.3.5",
