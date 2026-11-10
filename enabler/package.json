@@ -23,12 +23,12 @@
     "sass": "1.106.1",
     "ts-node": "10.9.2",
     "typescript": "7.0.2",
-    "vite": "8.3.5",
-    "vite-plugin-css-injected-by-js": "5.0.2",
+    "vite": "8.3.6",
+    "vite-plugin-css-injected-by-js": "5.0.3",
     "vitest": "5.0.5"
   },
   "dependencies": {
-    "serve": "14.2.6"
+    "serve": "14.2.7"
   },
   "overrides": {
     "brace-expansion@1": "1.1.21",
